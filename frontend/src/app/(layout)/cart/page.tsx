@@ -11,6 +11,8 @@ export default function Cart() {
     return total + (item.amount * Number(item.product.price))
   }, 0)
 
+  const taxesPrice = totalPrice * (2/100)
+
   useEffect(() => {
     setCartNotifications(0)
   }, [])
@@ -76,14 +78,14 @@ export default function Cart() {
                 </div>
                 <div className="flex justify-between mt-4">
                   <h4>Taxes</h4>
-                  <h4>$27.38</h4>
+                  <h4>${taxesPrice}</h4>
                 </div>
               </div>
               <div className="h-[1px] bg-gray-200 rounded mt-7 mb-6" />
               <div>
                 <div className="flex justify-between">
                   <h3>Estimated Total</h3>
-                  <h3>${totalPrice + 27.38}</h3>
+                  <h3>${totalPrice + taxesPrice}</h3>
                 </div>
                 <div className="flex justify-between text-sm text-blue-800 font-bold leading-none mt-1 items-center">
                   <div className="flex items-center">
@@ -91,7 +93,7 @@ export default function Cart() {
                   <p className="ml-1">$AMZ</p>
 
                   </div>
-                  <p className="ml-2">+ ${((totalPrice + 27.38) / 30).toFixed(2)}</p>
+                  <p className="ml-2">+ ${((totalPrice + taxesPrice) / 30).toFixed(2)}</p>
                 </div>
                 <button className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
               </div>
