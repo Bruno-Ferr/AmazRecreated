@@ -3,7 +3,9 @@ import { ShopCartContext } from "@/context/cartContext"
 import { ArrowLeft, Coins, Minus, Plus, Truck, X } from "@phosphor-icons/react"
 import Image from "next/image"
 import Link from "next/link"
-import { useContext, useEffect } from "react"
+import { useCallback, useContext, useEffect } from "react"
+import { ethers } from "ethers";
+import axios from "axios"
 
 export default function Cart() {
   const {cartList, setCartNotifications, removeFromCart, addToCart} = useContext(ShopCartContext)
@@ -13,8 +15,42 @@ export default function Cart() {
 
   const taxesPrice = totalPrice * (2/100)
 
+    //connect to metamask
+    const _connectToMetaMask = useCallback(async () => {
+      const ethereum = window.ethereum;
+      // Check if MetaMask is installed
+      if (typeof ethereum !== "undefined") {
+        try {
+          // Request access to the user's MetaMask accounts
+          const accounts = await ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          // Get the connected Ethereum address
+          const address = accounts[0];
+          // Check address in console of web browser
+          console.log("connected to MetaMask with address: ", address);
+        } catch (error: Error | any) {
+          alert(`Error connecting to MetaMask: ${error?.message ?? error}`);
+        }
+      } else {
+        alert("MetaMask not installed");
+      }
+    }, []);
+  
+    async function purchase() {
+      console.log("clicked")
+      if(typeof window.ethereum !== "undefined") {
+        console.log("window.ethereum")
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        console.log(provider)
+        axios.post(`${process.env.API_ADDRESS}/purchase`, provider)
+      }
+    }
+  
+
   useEffect(() => {
     setCartNotifications(0)
+    _connectToMetaMask()
   }, [])
 
   return (
@@ -93,9 +129,9 @@ export default function Cart() {
                   <p className="ml-1">$AMZ</p>
 
                   </div>
-                  <p className="ml-2">+ ${((totalPrice + taxesPrice) / 30).toFixed(2)}</p>
+                  <p className="ml-2">+ ${(totalPrice / 30).toFixed(2)}</p>
                 </div>
-                <button className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
+                <button onClick={() => purchase()} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
               </div>
             </div>
             <div className="flex w-full border bg-gray-200 rounded-lg h-11 mt-4">

@@ -9,9 +9,10 @@ const amount: bigint = 5_000_000_000_000_000_000n;
 async function main() {
   const [owner, address1] = await hre.ethers.getSigners();
   const AMZContract = await hre.ethers.getContractAt("AMZToken", contractAddress)
-  const transfer = await AMZContract.earnAMZ(address1, amount)
+  //const transfer = await AMZContract.earnAMZ(address1, amount)
 
-  console.log(transfer)
+  console.log(owner)
+  //console.log(transfer)
 }
 
 main().catch((error) => {
