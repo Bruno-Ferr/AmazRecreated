@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import { purchaseController } from "./controller/purchase";
 import cors from 'cors';
+import { getProducts } from "./controller/products";
 
 // configures dotenv to work in your application
 dotenv.config();
@@ -15,6 +16,7 @@ app.get("/", (request: Request, response: Response) => {
 }); 
 
 app.post("/purchase", purchaseController); 
+app.get("/products", getProducts); 
 
 app.listen(PORT, () => { 
   console.log("Server running at PORT: ", PORT); 
