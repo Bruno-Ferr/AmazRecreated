@@ -15,42 +15,42 @@ export default function Cart() {
 
   const taxesPrice = totalPrice * (2/100)
 
-    //connect to metamask
-    const _connectToMetaMask = useCallback(async () => {
-      const ethereum = window.ethereum;
-      // Check if MetaMask is installed
-      if (typeof ethereum !== "undefined") {
-        try {
-          // Request access to the user's MetaMask accounts
-          const accounts = await ethereum.request({
-            method: "eth_requestAccounts",
-          });
-          // Get the connected Ethereum address
-          const address = accounts[0];
-          // Check address in console of web browser
-          console.log("connected to MetaMask with address: ", address);
-        } catch (error: Error | any) {
-          alert(`Error connecting to MetaMask: ${error?.message ?? error}`);
-        }
-      } else {
-        alert("MetaMask not installed");
-      }
-    }, []);
-  
-    async function purchase() {
-      console.log("clicked")
-      if(typeof window.ethereum !== "undefined") {
-        console.log("window.ethereum")
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        console.log(provider)
-        axios.post(`${process.env.API_ADDRESS}/purchase`, provider)
-      }
+//connect to metamask
+const _connectToMetaMask = useCallback(async () => {
+  const ethereum = window.ethereum;
+  // Check if MetaMask is installed
+  if (typeof ethereum !== "undefined") {
+    try {
+      // Request access to the user's MetaMask accounts
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      // Get the connected Ethereum address
+      const address = accounts[0];
+      // Check address in console of web browser
+      console.log("connected to MetaMask with address: ", address);
+      return address;
+    } catch (error: Error | any) {
+      alert(`Error connecting to MetaMask: ${error?.message ?? error}`);
     }
+  } else {
+    alert("MetaMask not installed");
+  }
+}, []);
+
+  const userAddr = _connectToMetaMask()
+    
+  async function purchase() {
+    if(typeof window.ethereum !== "undefined") {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      console.log(userAddr)
+      axios.post(`${process.env.API_ADDRESS}/purchase`, provider.getSigner)
+    }
+  }
   
 
   useEffect(() => {
     setCartNotifications(0)
-    _connectToMetaMask()
   }, [])
 
   return (

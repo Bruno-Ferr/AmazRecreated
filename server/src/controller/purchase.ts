@@ -3,24 +3,30 @@ import { ethers } from "ethers";
 import Token from "../../AMZToken.sol/AMZToken.json"
 
 export async function purchaseController(req: Request, res: Response) {
-  console.log("purchasing")
   //Receber produtos que foram comprados
   //Receber usuário que comprou e sua carteira metamask
   //const provider:any = req.body;
-  const provider = new ethers.JsonRpcProvider()
-  const tokenAddr = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512" //Could be the ENS
-  const signer = await provider.getSigner()
-  console.log(signer)
+  const userAddr = req.body
+  console.log(userAddr)
+  const provider = new ethers.JsonRpcProvider() //Trocar para o provedor da rede utilizada
+  const tokenAddr = "0x5FbDB2315678afecb367f032d93F642f64180aa3" //Could be the ENS; Salvo no env
+  const someoneAddr = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8" //Recebido do front end
+
+  const signer = await provider.getSigner(someoneAddr)
+  const owner = await provider.getSigner("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+
   //amount = (valor_total / 30) * (10^18)
-  const amount: bigint = 1_000_000_000_000_000_000n;
+  const amount: bigint = 2_000_000_000_000_000_000n;
+  const wasteAmount: bigint = 1_000_000_000_000_000_000n;
 
   //Remover produtos do banco de dados
   //Adicionar cliente, produtos e outras informações da compra em outra tabela
 
   //Rodar contrato e transferir valor ao cliente
   const AMZContract = new ethers.Contract(tokenAddr, Token.abi, provider)
-  await AMZContract.connect(signer).earnAMZ(signer, amount)
+  //await AMZContract.connect(owner).earnAMZ(signer, amount)
 
+  //await AMZContract.connect(signer).wasteAMZ(wasteAmount)
   return;
 }
 
