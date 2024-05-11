@@ -1,9 +1,91 @@
 {
-  "products": {
-    "url": "",
-    "name": "",
-    "price": "",
-    "description": "",
-    "freeShippingAvailable": false
-  }
+  "itemList": [{
+    "id": 1,
+    "url": "/Court_Vision.png",
+    "name": "Court Vision",
+    "brand": "Nike",
+    "stars": 5,
+    "reviews": 57,
+    "frete": true,
+    "price": 799,
+    "discount": "1099",
+    "availability": 18
+  }, {
+    "id": 2,
+    "url": "/Nike_Air_Max.png",
+    "name": "Nike Air Max",
+    "brand": "Nike",
+    "stars": 4.5,
+    "reviews": 130,
+    "frete": false,
+    "price": 899,
+    "discount": "1399",
+    "availability": 10
+  }, {
+    "id": 3,
+    "url": "/Adidas_Vs_Pace.png",
+    "name": "Adidas Vs Pace",
+    "brand": "Adidas",
+    "stars": 5,
+    "reviews": 23,
+    "frete": true,
+    "price": 599,
+    "discount": "899",
+    "availability": 5
+  }, {
+    "id": 4,
+    "url": "/Adidas_Runfalcon.png",
+    "name": "Adidas Runfalcon",
+    "brand": "Adidas",
+    "stars": 3,
+    "reviews": 57,
+    "frete": false,
+    "price": 999,
+    "discount": "1399",
+    "availability": 40
+  }, {
+    "id": 5,
+    "url": "/Nike_Air_Mx.png",
+    "name": "Nike Air Max",
+    "brand": "Nike",
+    "stars": 4.5,
+    "reviews": 130,
+    "frete": false,
+    "price": 899,
+    "discount": "1399",
+    "availability": 12
+  }, {
+    "id": 6,
+    "url": "/Adidas_Vs_Pac.png",
+    "name": "Adidas Vs Pace",
+    "brand": "Adidas",
+    "stars": 5,
+    "reviews": 23,
+    "frete": true,
+    "price": 599,
+    "discount": "899",
+    "availability": 21
+  }, {
+    "id": 7,
+    "url": "/Adidas_Runfalc.png",
+    "name": "Adidas Runfalcon",
+    "brand": "Adidas",
+    "stars": 3,
+    "reviews": 57,
+    "frete": false,
+    "price": 999,
+    "discount": "1399",
+    "availability": 3
+  }, {
+    "id": 8,
+    "url": "/Adidas_Runfalco.png",
+    "name": "Adidas Runfalcon",
+    "brand": "Adidas",
+    "stars": 3,
+    "reviews": 57,
+    "frete": false,
+    "price": 999,
+    "discount": "1399",
+    "availability": 2
+  }]
 }
