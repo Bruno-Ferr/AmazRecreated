@@ -3,11 +3,31 @@ import { ShopCartContext } from "@/context/cartContext";
 import { CaretDown, Heart, List, MagnifyingGlass, MapPin, ShoppingCartSimple } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import UserModal from "../Modal/UserHeaderModal";
+import axios from "axios";
+
+interface UserProps {
+  name: string,
+  email: string,
+  balance: number
+}
 
 export default function Header() { 
   const [cartNotifies, setCartNotifies] = useState()
   const { cartNotifications } = useContext(ShopCartContext)
+  const [openUserModal, setOpenUserModal] = useState(false)
+  const [user, setUser] = useState<UserProps>({} as UserProps)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await axios.get(`${process.env.API_ADDRESS}/client/1`, )
+      console.log(res.data)
+      setUser(res.data.user)
+    }
+
+    fetchUser()
+  })
 
   return (
     <div className="static">
@@ -57,7 +77,7 @@ export default function Header() {
               <span className="absolute top-[-5px] right-[-5px] px-[6px] py-[2px] bg-[#FF9900] text-[10px] text-white rounded-full">{cartNotifications}</span>
             }
           </Link>
-          <button className="flex items-center">
+          <button className="flex items-center relative" onClick={() => setOpenUserModal(!openUserModal)}> 
             <Image
               src="/ToYou.jpg"
               width={40}
@@ -66,9 +86,10 @@ export default function Header() {
               className="rounded-lg"
             />
             <div className="flex items-center">
-              <p className="text-sm text-[#646262] mx-2">Bruno</p>
+              <p className="text-sm text-[#646262] mx-2">{user?.name}</p>
               <CaretDown size={12} color="#646262"/>
             </div>
+            <UserModal isOpen={openUserModal} user={user} />
           </button>
         </div>
       </div>
