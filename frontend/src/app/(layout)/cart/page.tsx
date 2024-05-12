@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useCallback, useContext, useEffect } from "react"
 import { ethers } from "ethers";
 import axios from "axios"
+import Product from "../products/page"
 
 export default function Cart() {
   const {cartList, setCartNotifications, removeFromCart, addToCart} = useContext(ShopCartContext)
@@ -43,12 +44,15 @@ const _connectToMetaMask = useCallback(async () => {
   async function purchase() {
     if(typeof window.ethereum !== "undefined") {
       const provider = new ethers.BrowserProvider(window.ethereum);
-      console.log(userAddr)
-      axios.post(`${process.env.API_ADDRESS}/purchase`, provider.getSigner)
+
+      const data = {
+        userAddr: "0x",
+        products: cartList
+      }
+      axios.post(`${process.env.API_ADDRESS}/purchase`, data)
     }
   }
   
-
   useEffect(() => {
     setCartNotifications(0)
   }, [])
@@ -129,7 +133,7 @@ const _connectToMetaMask = useCallback(async () => {
                   <p className="ml-1">$AMZ</p>
 
                   </div>
-                  <p className="ml-2">+ ${(totalPrice / 30).toFixed(2)}</p>
+                  <p className="ml-2">+ ${(totalPrice / 50).toFixed(2)}</p>
                 </div>
                 <button onClick={() => purchase()} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
               </div>

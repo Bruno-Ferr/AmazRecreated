@@ -9,17 +9,18 @@ interface shopCartContextProps {
   cartList: productInCart[]
   cartNotifications: number
   setCartNotifications: (a: any) => void
-  addToCart: (id: string, product: ProductTypes) => void
-  removeFromCart: (id: string) => void
+  addToCart: (id: number, product: ProductTypes) => void
+  removeFromCart: (id: number) => void
 }
 
 type productInCart = {
-  id: string
+  id: number
   amount: number
   product: ProductTypes
 }
 
 type ProductTypes = {
+  id: number
   url: string
   name: string
   brand: string
@@ -36,7 +37,7 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
   const [cartList, setCartList] = useState<productInCart[]>([]);
   const [cartNotifications, setCartNotifications] = useState(0)
 
-  function addToCart(id: string, product: ProductTypes) {
+  function addToCart(id: number, product: ProductTypes) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       setCartList(prev => {
@@ -53,7 +54,7 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
     setCartNotifications(cartNotifications + 1)
   }
 
-  function removeFromCart(id: string) {
+  function removeFromCart(id: number) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       const productAmount = cartList[productIndex]

@@ -8,6 +8,7 @@ interface UserModalProps {
 }
 
 export default function UserModal({isOpen, user}: UserModalProps) {
+
   if(isOpen) {
     return (
       <div className="w-fit h-64 absolute rounded-lg bg-white border border-gray-500 top-full p-4 mt-1">

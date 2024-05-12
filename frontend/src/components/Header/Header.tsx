@@ -27,8 +27,8 @@ export default function Header() {
     }
 
     fetchUser()
-  })
-
+  }, [])
+  
   return (
     <div className="static">
     <div className="w-full">

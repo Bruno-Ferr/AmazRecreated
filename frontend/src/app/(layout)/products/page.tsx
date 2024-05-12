@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useContext } from "react";
 
 const itemList = [{
+  id: 1,
   url: "/Court_Vision.png",
   name: "Court Vision",
   brand: "Nike",
@@ -15,6 +16,7 @@ const itemList = [{
   price: 799,
   discount: "1099",
 }, {
+  id: 2,
   url: "/Nike_Air_Max.png",
   name: "Nike Air Max",
   brand: "Nike",
@@ -24,6 +26,7 @@ const itemList = [{
   price: 899,
   discount: "1399",
 }, {
+  id: 3,
   url: "/Adidas_Vs_Pace.png",
   name: "Adidas Vs Pace",
   brand: "Adidas",
@@ -33,6 +36,7 @@ const itemList = [{
   price: 599,
   discount: "899",
 }, {
+  id: 4,
   url: "/Adidas_Runfalcon.png",
   name: "Adidas Runfalcon",
   brand: "Adidas",
@@ -42,6 +46,7 @@ const itemList = [{
   price: 999,
   discount: "1399",
 }, {
+  id: 5,
   url: "/Nike_Air_Mx.png",
   name: "Nike Air Max",
   brand: "Nike",
@@ -51,6 +56,7 @@ const itemList = [{
   price: 899,
   discount: "1399",
 }, {
+  id: 6,
   url: "/Adidas_Vs_Pac.png",
   name: "Adidas Vs Pace",
   brand: "Adidas",
@@ -60,6 +66,7 @@ const itemList = [{
   price: 599,
   discount: "899",
 }, {
+  id: 7,
   url: "/Adidas_Runfalc.png",
   name: "Adidas Runfalcon",
   brand: "Adidas",
@@ -69,6 +76,7 @@ const itemList = [{
   price: 999,
   discount: "1399",
 }, {
+  id: 8,
   url: "/Adidas_Runfalco.png",
   name: "Adidas Runfalcon",
   brand: "Adidas",
@@ -139,8 +147,8 @@ export default function Product() {
                       <p className="text-sm text-[#9B9A9A] ml-2">{item.reviews}</p>
                     </button>
                     <p className="text-2xl font-semibold text-[#221F1F]">R${item.price} <span className="text-sm line-through text-[#ABABAB] decoration-gray-700 decoration-3">R${item.discount}</span></p>
-                    <button className="p-1 bg-blue-500 text-white rounded-md mr-2" onClick={() => addToCart(item.name, item)}>Add to cart</button>
-                    <button className="p-1 bg-red-500 text-white rounded-md" onClick={() => removeFromCart(item.name)}>Remove</button>
+                    <button className="p-1 bg-blue-500 text-white rounded-md mr-2" onClick={() => addToCart(item.id, item)}>Add to cart</button>
+                    <button className="p-1 bg-red-500 text-white rounded-md" onClick={() => removeFromCart(item.id)}>Remove</button>
                     {/* {item.frete && <p className="text-[14px] leading-1">
                       Receba até <span className="font-bold">Amanhã, 10 de abr. </span>
                       Frete GRÁTIS em pedidos acima de R$ 129,00 enviados pela Amazon</p>

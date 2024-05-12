@@ -15,7 +15,7 @@ export async function getClient(req: Request, res: Response) {
   const user = {
     email: 'JohnDoe@gmail.com',
     name: 'John Doe',
-    balance
+    balance: ethers.formatEther(balance)
   }
 
   return res.status(200).json({user})
