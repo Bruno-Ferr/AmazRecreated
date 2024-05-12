@@ -7,6 +7,7 @@ import { useCallback, useContext, useEffect } from "react"
 import { ethers } from "ethers";
 import axios from "axios"
 import Product from "../products/page"
+import { toast } from "react-toastify"
 
 export default function Cart() {
   const {cartList, setCartNotifications, removeFromCart, addToCart} = useContext(ShopCartContext)
@@ -50,6 +51,8 @@ const _connectToMetaMask = useCallback(async () => {
         products: cartList
       }
       axios.post(`${process.env.API_ADDRESS}/purchase`, data)
+
+      toast.success("Purchase completed!", {theme: 'colored'});
     }
   }
   
