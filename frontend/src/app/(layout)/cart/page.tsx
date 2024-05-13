@@ -8,12 +8,14 @@ import { ethers } from "ethers";
 import axios from "axios"
 import Product from "../products/page"
 import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 
 export default function Cart() {
   const {cartList, setCartNotifications, removeFromCart, addToCart} = useContext(ShopCartContext)
   const totalPrice = cartList.reduce((total, item) => {
     return total + (item.amount * Number(item.product.price))
   }, 0)
+  const router = useRouter()
 
   const taxesPrice = totalPrice * (2/100)
 
@@ -53,6 +55,7 @@ const _connectToMetaMask = useCallback(async () => {
       axios.post(`${process.env.API_ADDRESS}/purchase`, data)
 
       toast.success("Purchase completed!", {theme: 'colored'});
+      router.push('./congrats')
     }
   }
   
