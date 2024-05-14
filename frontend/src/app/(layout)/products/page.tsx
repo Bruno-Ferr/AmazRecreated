@@ -147,8 +147,8 @@ export default function Product() {
                       <p className="text-sm text-[#9B9A9A] ml-2">{item.reviews}</p>
                     </button>
                     <p className="text-2xl font-semibold text-[#221F1F]">R${item.price} <span className="text-sm line-through text-[#ABABAB] decoration-gray-700 decoration-3">R${item.discount}</span></p>
-                    <button className="p-1 bg-blue-500 text-white rounded-md mr-2" onClick={() => addToCart(item.id, item)}>Add to cart</button>
-                    <button className="p-1 bg-red-500 text-white rounded-md" onClick={() => removeFromCart(item.id)}>Remove</button>
+                    <button className="p-1 bg-blue-500 text-white rounded-md mr-2" onClick={() => addToCart(item.id, item, true)}>Add to cart</button>
+                    <button className="p-1 bg-red-500 text-white rounded-md" onClick={() => removeFromCart(item.id, true)}>Remove</button>
                     {/* {item.frete && <p className="text-[14px] leading-1">
                       Receba até <span className="font-bold">Amanhã, 10 de abr. </span>
                       Frete GRÁTIS em pedidos acima de R$ 129,00 enviados pela Amazon</p>

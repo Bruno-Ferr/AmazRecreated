@@ -9,8 +9,9 @@ interface shopCartContextProps {
   cartList: productInCart[]
   cartNotifications: number
   setCartNotifications: (a: any) => void
-  addToCart: (id: number, product: ProductTypes) => void
-  removeFromCart: (id: number) => void
+  addToCart: (id: number, product: ProductTypes, updateNotifies?: boolean) => void
+  removeFromCart: (id: number, updateNotifies?: boolean) => void
+  removeAllFromCart: (id: number) => void
 }
 
 type productInCart = {
@@ -37,7 +38,7 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
   const [cartList, setCartList] = useState<productInCart[]>([]);
   const [cartNotifications, setCartNotifications] = useState(0)
 
-  function addToCart(id: number, product: ProductTypes) {
+  function addToCart(id: number, product: ProductTypes, updateNotifies?: boolean) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       setCartList(prev => {
@@ -51,10 +52,12 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
     } else {
       setCartList(prev => [...prev, {id, product, amount: 1}])
     }
-    setCartNotifications(cartNotifications + 1)
+    if(updateNotifies) {
+      setCartNotifications(cartNotifications + 1)
+    }
   }
 
-  function removeFromCart(id: number) {
+  function removeFromCart(id: number, updateNotifies?: boolean) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       const productAmount = cartList[productIndex]
@@ -72,11 +75,21 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
         setCartList(cartWithoutProduct)
       }
     }
-    setCartNotifications(cartNotifications - 1)
+    if(updateNotifies) {
+      setCartNotifications(cartNotifications - 1)
+    }
+  }
+
+  function removeAllFromCart(id: number) {
+    const productIndex = cartList.findIndex(product => product.id === id);
+    if(productIndex != -1) {
+      const cartWithoutProduct = cartList.filter(product => product.id !== id)
+      setCartList(cartWithoutProduct)
+    }
   }
 
   return (
-    <ShopCartContext.Provider value={{cartList, addToCart, removeFromCart, setCartNotifications, cartNotifications}}>
+    <ShopCartContext.Provider value={{cartList, addToCart, removeFromCart, setCartNotifications, cartNotifications, removeAllFromCart}}>
       {children}
     </ShopCartContext.Provider>
   )

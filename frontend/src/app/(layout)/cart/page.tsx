@@ -9,40 +9,17 @@ import axios from "axios"
 import Product from "../products/page"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import { UserContext } from "@/context/userContext"
 
 export default function Cart() {
-  const {cartList, setCartNotifications, removeFromCart, addToCart} = useContext(ShopCartContext)
+  const {cartList, setCartNotifications, removeFromCart, addToCart, removeAllFromCart} = useContext(ShopCartContext)
+  const {setUser} = useContext(UserContext)
   const totalPrice = cartList.reduce((total, item) => {
     return total + (item.amount * Number(item.product.price))
   }, 0)
   const router = useRouter()
 
   const taxesPrice = totalPrice * (2/100)
-
-//connect to metamask
-const _connectToMetaMask = useCallback(async () => {
-  const ethereum = window.ethereum;
-  // Check if MetaMask is installed
-  if (typeof ethereum !== "undefined") {
-    try {
-      // Request access to the user's MetaMask accounts
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      // Get the connected Ethereum address
-      const address = accounts[0];
-      // Check address in console of web browser
-      console.log("connected to MetaMask with address: ", address);
-      return address;
-    } catch (error: Error | any) {
-      alert(`Error connecting to MetaMask: ${error?.message ?? error}`);
-    }
-  } else {
-    alert("MetaMask not installed");
-  }
-}, []);
-
-  const userAddr = _connectToMetaMask()
     
   async function purchase() {
     if(typeof window.ethereum !== "undefined") {
@@ -52,8 +29,8 @@ const _connectToMetaMask = useCallback(async () => {
         userAddr: "0x",
         products: cartList
       }
-      axios.post(`${process.env.API_ADDRESS}/purchase`, data)
-
+      const res = await axios.post(`${process.env.API_ADDRESS}/purchase`, data)
+      setUser((prev: any) => ({...prev, balance: res.data.balance}))
       toast.success("Purchase completed!", {theme: 'colored'});
       router.push('./congrats')
     }
@@ -97,7 +74,7 @@ const _connectToMetaMask = useCallback(async () => {
                       <button className="text-gray-400" onClick={() => addToCart(product.id, product.product)}><Plus size={16} /></button>
                     </div>
                     <h3 className="font-semibold text-lg ">${product.amount * Number(product.product.price)}</h3>
-                    <button className="ml-4 mr-2 rounded-full bg-gray-300 p-1">
+                    <button onClick={() => removeAllFromCart(product.id)} className="ml-4 mr-2 rounded-full bg-gray-300 p-1">
                         <X size={16} />
                     </button>
                   </div>

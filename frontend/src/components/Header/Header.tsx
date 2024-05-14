@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import UserModal from "../Modal/UserHeaderModal";
 import axios from "axios";
+import { UserContext } from "@/context/userContext";
 
 interface UserProps {
   name: string,
@@ -17,18 +18,8 @@ export default function Header() {
   const [cartNotifies, setCartNotifies] = useState()
   const { cartNotifications } = useContext(ShopCartContext)
   const [openUserModal, setOpenUserModal] = useState(false)
-  const [user, setUser] = useState<UserProps>({} as UserProps)
+  const {user} = useContext(UserContext)
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(`${process.env.API_ADDRESS}/client/1`, )
-      console.log(res.data)
-      setUser(res.data.user)
-    }
-
-    fetchUser()
-  }, [])
-  
   return (
     <div className="static">
     <div className="w-full">

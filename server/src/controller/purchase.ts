@@ -2,12 +2,14 @@ import { Request, Response } from "express";
 import { ethers } from "ethers";
 import Token from "../../AMZToken.sol/AMZToken.json"
 import { findProductDB } from "../database/productsDb";
+import { earnAMZ, seeBalance } from "../contract";
+import fs from 'fs'
 
 export async function purchaseController(req: Request, res: Response) {
   //Receber produtos que foram comprados
   //Receber usuário que comprou e sua carteira metamask
   //const provider:any = req.body;
-  const {userAddr, products} = req.body
+  const {userAddr, products, userEmail} = req.body
 
   try {
     let total = 0;
@@ -21,30 +23,28 @@ export async function purchaseController(req: Request, res: Response) {
         return res.status(400).send({message: "We don't have more this product in stock!"})
       }
     }) 
+    const value = (total/50).toString()
+    await earnAMZ(userAddr, value)
 
-    const provider = new ethers.JsonRpcProvider() //Trocar para o provedor da rede utilizada
-    const tokenAddr = "0x5FbDB2315678afecb367f032d93F642f64180aa3" //Could be the ENS; Salvo no env
-    const someoneAddr = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8" //Recebido do front end
-
-    const signer = await provider.getSigner(someoneAddr)
-    const owner = await provider.getSigner("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
-    
-    const big: bigint = 1_000_000_000_000_000_000n;
-    // console.log(total / 50)
-    //const amount = ethers.formatUnits(total / 50, "wei")
-    const amount = ethers.parseEther('17.98')
-
-    const wasteAmount: bigint = 1_000_000_000_000_000_000n;
-
-    //Rodar contrato e transferir valor ao cliente
-    const AMZContract = new ethers.Contract(tokenAddr, Token.abi, provider)
-    await AMZContract.connect(owner).earnAMZ(signer, amount)
-    //await AMZContract.connect(signer).wasteAMZ(wasteAmount)
-
+    const balance = await seeBalance(userAddr)
     //Atualizar a tabela de comprar com status para "pago"
-    return res.status(200).send({message: "Transaction successfully"});
+    const info = {
+      user: userEmail || 'johnDoe@gmail.com',
+      status: 'payed',
+      products,
+      total,
+      AMZEarned: value
+    }
+
+    const data = JSON.stringify(info)
+    fs.writeFile("./db/purchase.json", data, (error) => {
+      if(error) {
+        console.log(error)
+      }
+    })
+    return res.status(200).send({message: "Transaction successfully", balance: ethers.formatEther(balance)});
   } catch (err) {
-    console.log(err)
+    throw new Error("Something went wrong earn AMZ")
   }
 }
 
