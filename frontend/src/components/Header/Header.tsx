@@ -80,7 +80,7 @@ export default function Header() {
               <p className="text-sm text-[#646262] mx-2">{user?.name}</p>
               <CaretDown size={12} color="#646262"/>
             </div>
-            <UserModal isOpen={openUserModal} user={user} />
+            <UserModal isOpen={openUserModal} setOpen={setOpenUserModal} user={user} />
           </button>
         </div>
       </div>

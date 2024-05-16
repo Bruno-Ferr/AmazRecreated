@@ -13,7 +13,7 @@ import { UserContext } from "@/context/userContext"
 
 export default function Cart() {
   const {cartList, setCartNotifications, removeFromCart, addToCart, removeAllFromCart} = useContext(ShopCartContext)
-  const {setUser} = useContext(UserContext)
+  const {user, setUser} = useContext(UserContext)
   const totalPrice = cartList.reduce((total, item) => {
     return total + (item.amount * Number(item.product.price))
   }, 0)
@@ -26,9 +26,10 @@ export default function Cart() {
       const provider = new ethers.BrowserProvider(window.ethereum);
 
       const data = {
-        userAddr: "0x",
+        userAddr: user.wallet,
         products: cartList
       }
+      
       const res = await axios.post(`${process.env.API_ADDRESS}/purchase`, data)
       setUser((prev: any) => ({...prev, balance: res.data.balance}))
       toast.success("Purchase completed!", {theme: 'colored'});

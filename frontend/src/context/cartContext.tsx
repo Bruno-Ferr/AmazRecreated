@@ -12,6 +12,7 @@ interface shopCartContextProps {
   addToCart: (id: number, product: ProductTypes, updateNotifies?: boolean) => void
   removeFromCart: (id: number, updateNotifies?: boolean) => void
   removeAllFromCart: (id: number) => void
+  cleanCart: () => void
 }
 
 type productInCart = {
@@ -88,8 +89,12 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
     }
   }
 
+  function cleanCart() {
+    setCartList([])
+  }
+
   return (
-    <ShopCartContext.Provider value={{cartList, addToCart, removeFromCart, setCartNotifications, cartNotifications, removeAllFromCart}}>
+    <ShopCartContext.Provider value={{cartList, addToCart, removeFromCart, setCartNotifications, cartNotifications, removeAllFromCart, cleanCart}}>
       {children}
     </ShopCartContext.Provider>
   )

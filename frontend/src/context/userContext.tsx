@@ -6,6 +6,7 @@ interface UserProps {
   name: string
   email: string
   balance: number
+  wallet?: any
 }
 
 interface UserContextProps {

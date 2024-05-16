@@ -36,8 +36,8 @@ export async function wasteAMZ(addr: string) {
 
 export async function seeBalance(addr: string) {
   try {
-    const {signer, AMZContract} = await connect(addr)
-  
+    const {signer, AMZContract} = await connect(addr) 
+    
     const balance = await AMZContract.connect(signer).seeBalance()
   
     return balance
