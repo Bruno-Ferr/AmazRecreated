@@ -11,30 +11,21 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
   const {user, setUser} = useContext(UserContext)
   const clickoutRef = useRef<HTMLDivElement>(null);
 
-  //connect to metamask
-  const _connectToMetaMask = useCallback(async () => {
-    const ethereum = window.ethereum;
-    // Check if MetaMask is installed
-    if (typeof ethereum !== "undefined") {
-      try {
-        // Request access to the user's MetaMask accounts
-        const accounts = await ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        // Get the connected Ethereum address
-        const address = accounts[0];
-        // Check address in console of web browser
-        console.log("connected to MetaMask with address: ", address);
-        const res = await axios.get(`${process.env.API_ADDRESS}/clientBalance/${address}`)
+  const connecWallet = async () => {
+    
+    try {
+      if(!window.ethereum) return console.log("Install MetaMask");
 
-        setUser((prev: any) => ({...prev, wallet: address, balance: res.data}))
-      } catch (error: Error | any) {
-        alert(`Error connecting to MetaMask: ${error?.message ?? error}`);
-      }
-    } else {
-      alert("MetaMask not installed");
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const firstAccount = accounts[0]
+      setUser((prev: any) => ({...prev, wallet: firstAccount}))
+      return firstAccount;
+    } catch (error) {
+      console.log(error)
     }
-  }, []);
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -66,7 +57,7 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
         </div>
         <div className="flex justify-between">
           <p>AMZ:</p>  
-          {user?.wallet ? (<p>{user.balance}</p>) : (<button onClick={() => _connectToMetaMask()} className="text-blue-500">Connect your wallet</button>)}
+          {user?.wallet ? (<p>{user.balance}</p>) : (<button onClick={(e) =>{e.stopPropagation(); connecWallet()}} className="text-blue-500">Connect your wallet</button>)}
         </div>
       </div>
     )

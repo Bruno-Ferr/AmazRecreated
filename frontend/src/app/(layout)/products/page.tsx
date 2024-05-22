@@ -87,7 +87,7 @@ const itemList = [{
   discount: "1399",
 }]
 
-export default function Product() {
+export default function Products() {
   const { addToCart, removeFromCart } = useContext(ShopCartContext)
 
   const handleClickInterno = (event: any) => {
