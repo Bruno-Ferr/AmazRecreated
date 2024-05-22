@@ -126,7 +126,7 @@ export default function Products() {
             return (
               <div className="flex" key={item.url}>
                 <div className="flex flex-col text-start">
-                  <Link href="/" className="h-48 w-60 flex items-center justify-center rounded-xl shadow-[10px_10px_25px_5px_rgba(0,0,0,0.1)]">
+                  <Link href={`./products/${item.id}`} className="h-48 w-60 flex items-center justify-center rounded-xl shadow-[10px_10px_25px_5px_rgba(0,0,0,0.1)]">
                     <Image
                       src={item.url}
                       width={200}
