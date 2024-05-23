@@ -1,8 +1,18 @@
 'use client'
 import { ArrowCircleDown, ArrowCircleUp, ArrowRight, ArrowsClockwise, CaretDown, ChatCircleDots, Clock, Heart, Question, ShoppingCart, Star, StarHalf, Truck } from "@phosphor-icons/react";
+import axios from "axios";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-export default function Product() {
+export default function Product({ params }: { params: { productId: string } }) {
+  const [product, setProduct] = useState({})
+  
+  useEffect(() => {
+    axios.get(`${process.env.API_ADDRESS}/getProduct/${params.productId}`).then(res => {
+      setProduct(res.data)
+    })
+  }, [])
+  
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">

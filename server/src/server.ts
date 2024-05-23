@@ -4,6 +4,7 @@ import { goToCheckout, purchaseController } from "./controller/purchase";
 import cors from 'cors';
 import { findProduct, getProducts } from "./controller/products";
 import { getClient, getClientBalance, getClientLastPurchase } from "./controller/client";
+import mongoose, { Schema } from "mongoose";
 
 // configures dotenv to work in your application
 dotenv.config();
@@ -11,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 const PORT = process.env.PORT || 3333;
 

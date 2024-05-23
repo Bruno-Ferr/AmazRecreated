@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ethers } from "ethers";
 import { seeBalance } from "../contract";
 import { userLastPurchaseDB } from "../database/purchaseDb";
+import { User } from "../database/models/user";
 
 interface User {
   email: string;
@@ -11,6 +12,9 @@ interface User {
 
 export async function getClient(req: Request, res: Response) {
   const {userAddr} = req.params
+  //pegar do mongo
+
+  const userFromdb = await User.find({address: userAddr})
 
   let user: User = {
     email: 'JohnDoe@gmail.com',
@@ -31,6 +35,7 @@ export async function getClientLastPurchase(req: Request, res: Response) {
   const {email} = req.params
 
   const purchase = await userLastPurchaseDB(email)
+  //pegar do mongo
 
   return res.status(200).json({purchase})
 }
