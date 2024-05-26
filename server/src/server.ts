@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { goToCheckout, purchaseController } from "./controller/purchase";
 import cors from 'cors';
 import { addProduct, findProduct, getProducts } from "./controller/products";
-import { getClient, getClientBalance, getClientLastPurchase } from "./controller/client";
+import { addClient, getClient, getClientBalance, getClientLastPurchase } from "./controller/client";
 import mongoose, { Schema } from "mongoose";
 
 // configures dotenv to work in your application
@@ -26,10 +26,11 @@ app.post("/createLink", goToCheckout);
 app.get("/products", getProducts); 
 app.get("/products/find/:product_id", findProduct); 
 app.get("/client/:id", getClient); 
-app.get("/clientLastPurchase/:email", getClientLastPurchase); 
+app.get("/clientLastPurchase/:id", getClientLastPurchase); 
 app.get("/clientBalance/:user_addr", getClientBalance); 
 
 app.post("/addProduct", addProduct); 
+app.post("/addUser", addClient); 
 
 app.listen(PORT, () => { 
   console.log("Server running at PORT: ", PORT); 
