@@ -2,12 +2,13 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import { goToCheckout, purchaseController } from "./controller/purchase";
 import cors from 'cors';
-import { findProduct, getProducts } from "./controller/products";
+import { addProduct, findProduct, getProducts } from "./controller/products";
 import { getClient, getClientBalance, getClientLastPurchase } from "./controller/client";
 import mongoose, { Schema } from "mongoose";
 
 // configures dotenv to work in your application
 dotenv.config();
+mongoose.connect(process.env.MONGO_CONNECTION!)
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -23,10 +24,12 @@ app.get("/", (request: Request, response: Response) => {
 app.post("/purchase", purchaseController); 
 app.post("/createLink", goToCheckout); 
 app.get("/products", getProducts); 
-app.get("/products/find", findProduct); 
+app.get("/products/find/:product_id", findProduct); 
 app.get("/client/:id", getClient); 
 app.get("/clientLastPurchase/:email", getClientLastPurchase); 
-app.get("/clientBalance/:userAddr", getClientBalance); 
+app.get("/clientBalance/:user_addr", getClientBalance); 
+
+app.post("/addProduct", addProduct); 
 
 app.listen(PORT, () => { 
   console.log("Server running at PORT: ", PORT); 

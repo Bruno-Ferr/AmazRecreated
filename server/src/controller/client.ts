@@ -11,18 +11,18 @@ interface User {
 }
 
 export async function getClient(req: Request, res: Response) {
-  const {userAddr} = req.params
+  const {id} = req.params
   //pegar do mongo
 
-  const userFromdb = await User.find({address: userAddr})
+  const userFromdb = await User.find({address: id})
 
   let user: User = {
     email: 'JohnDoe@gmail.com',
     name: 'John Doe',
   }
 
-  if(userAddr) {
-    const balance = await seeBalance(userAddr)
+  if(id) {
+    const balance = await seeBalance(id)
     user.balance = ethers.formatEther(balance)
   } 
 
@@ -41,9 +41,9 @@ export async function getClientLastPurchase(req: Request, res: Response) {
 }
 
 export async function getClientBalance(req: Request, res: Response) { //Essa pode ser uma interação pelo front end mesmo
-  const {userAddr} = req.params
+  const {user_addr} = req.params
 
-  const balance = await seeBalance(userAddr)
+  const balance = await seeBalance(user_addr)
 
   return res.status(200).send(ethers.formatEther(balance))
 }

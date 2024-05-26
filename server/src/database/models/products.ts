@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-mongoose.connect(process.env.MONGO_CONNECTION!)
 
 const ProductSchema = new Schema({
   id: String,
