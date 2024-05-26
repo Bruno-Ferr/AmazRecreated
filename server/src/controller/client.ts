@@ -26,8 +26,7 @@ export async function getClientLastPurchase(req: Request, res: Response) {
 
   //const purchase = await userLastPurchaseDB(email)
   const [userFromdb] = await User.find({id: id})
-  const lastPurchase = userFromdb.purchases[0]
-  //pegar do mongo
+  const lastPurchase = userFromdb.purchases[0] //deve ser o tamanho de purchases. Ao salvar, deve ser tamanho de purchases o id das purchases
 
   return res.status(200).json({lastPurchase})
 }

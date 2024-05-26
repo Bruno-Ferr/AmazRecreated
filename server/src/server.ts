@@ -21,7 +21,7 @@ app.get("/", (request: Request, response: Response) => {
   response.status(200).send("Hello World");
 }); 
 
-app.post("/purchase", purchaseController); 
+app.put("/purchase", purchaseController); 
 app.post("/createLink", goToCheckout); 
 app.get("/products", getProducts); 
 app.get("/products/find/:product_id", findProduct); 

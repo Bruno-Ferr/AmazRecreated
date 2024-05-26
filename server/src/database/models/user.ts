@@ -10,7 +10,7 @@ const UserSchema = new Schema({
       id: String,
       name: String,
       brand: String,
-      price: String,
+      price: Number,
       reviews: [{
         comment: String,
         stars: Number,
