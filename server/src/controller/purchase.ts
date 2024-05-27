@@ -15,7 +15,7 @@ export async function purchaseController(req: Request, res: Response) {
   //Receber produtos que foram comprados
   //Receber usuário que comprou e sua carteira metamask
   //const provider:any = req.body;
-  const {userAddr} = req.body
+  const {userAddr, purchase} = req.body
 
   const returnData: purchaseResponse = {
     message: "Transaction successfully", 
@@ -25,7 +25,7 @@ export async function purchaseController(req: Request, res: Response) {
     const newPosition = 0; //Beginning of the array
     await User.findOneAndUpdate(
       { address: userAddr },
-      { $push: { purchases: { $each: [req.body], $position: newPosition } } },
+      { $push: { purchases: { $each: [purchase], $position: newPosition } } },
       { new: true }
     );
 

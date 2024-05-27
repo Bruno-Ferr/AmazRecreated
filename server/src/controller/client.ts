@@ -14,9 +14,21 @@ export async function getClient(req: Request, res: Response) {
   const {id} = req.params
   //pegar do mongo
 
-  const userFromdb = await User.find({address: id})
+  const [userFromdb] = await User.find({
+    $or: [
+      { address: id },
+      { email: id }
+    ]
+  })
 
-  return res.status(200).json({userFromdb})
+  if(!userFromdb) return //avisar "User não encontrado"
+
+  const user = {
+    name: userFromdb.name,
+    email: userFromdb.email
+  }
+  console.log(user)
+  return res.status(200).json({user})
 }
 
 export async function getClientPurchases(req: Request, res: Response) {}
@@ -42,7 +54,22 @@ export async function getClientBalance(req: Request, res: Response) { //Essa pod
 export async function addClient(req: Request, res: Response) {
   const {user} = req.body
 
-  const data = new User(user)
+  const userExists = await User.find({
+    $or: [
+      { address: user?.address },
+      { email: user?.email }
+    ]
+  })
+
+  if(userExists.length > 0) return res.status(400).send({message: "User already exists"})
+
+  const infos = {
+    ...user,
+    address: user?.address || '',
+    purchases: []
+  }
+
+  const data = new User(infos)
   data.save();
 
   return res.status(200).send({message: "User added"})

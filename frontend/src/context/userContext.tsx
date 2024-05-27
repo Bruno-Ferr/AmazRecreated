@@ -12,6 +12,8 @@ interface UserProps {
 interface UserContextProps {
   user: UserProps
   setUser: (value: any) => void 
+  login: (data: any) => void
+  signUp: (data: any) => void
 }
 
 interface UserProviderProps {
@@ -30,10 +32,20 @@ export function UserProvider({children}: UserProviderProps) {
     }
 
     fetchUser()
-
   }, [])
+
+  const login = async (data: string) => {
+    const res = await axios.get(`${process.env.API_ADDRESS}/client/${data}`)
+    setUser(res.data.user)
+  }
+
+  const signUp = async (data: any) => {
+    await axios.post(`${process.env.API_ADDRESS}/addUser`, data)
+    setUser({...data.user, balance: 0}) 
+  }
+
   return (
-    <UserContext.Provider value={{user, setUser}}>
+    <UserContext.Provider value={{user, setUser, login, signUp}}>
       {children}
     </UserContext.Provider>
   )
