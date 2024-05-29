@@ -68,7 +68,7 @@ export default function Header() {
               <span className="absolute top-[-5px] right-[-5px] px-[6px] py-[2px] bg-[#FF9900] text-[10px] text-white rounded-full">{cartNotifications}</span>
             }
           </Link>
-          <button className="flex items-center relative" onClick={() => setOpenUserModal(!openUserModal)}> 
+          <button className="flex items-center relative" onClick={() => setOpenUserModal(prev => !openUserModal)}> 
             <Image
               src="/ToYou.jpg"
               width={40}
@@ -80,8 +80,8 @@ export default function Header() {
               <p className="text-sm text-[#646262] mx-2">{user?.name}</p>
               <CaretDown size={12} color="#646262"/>
             </div>
-            <UserModal isOpen={openUserModal} setOpen={setOpenUserModal} user={user} />
           </button>
+          <UserModal isOpen={openUserModal} setOpen={setOpenUserModal} />
         </div>
       </div>
     </div>

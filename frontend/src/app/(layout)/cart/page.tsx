@@ -56,10 +56,10 @@ export default function Cart() {
             </div>
             {cartList.map(product => {
               return (
-                <div className="max-w-2xl w-full mt-4">
+                <div className="max-w-2xl w-full mt-4" key={product.product.id}>
                   <div className="flex items-center justify-between border border-gray-300 rounded-lg p-3">
                     <div className="w-24 h-20flex items-center mx-5 my-4">
-                      <Image src={product.product.url} width={96} height={86} alt={product.product.name} />
+                      <Image src={product.product.image[0]} width={96} height={86} alt={product.product.name} />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">{product.product.name}</h3>

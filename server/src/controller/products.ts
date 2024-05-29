@@ -13,7 +13,6 @@ export async function findProduct(req: Request, res: Response) {
   //const product = findProductDB(1)
   const {product_id} = req.params
   const product = await Product.findOne({ id: product_id})
-
   return res.status(200).json(product)
 }
 

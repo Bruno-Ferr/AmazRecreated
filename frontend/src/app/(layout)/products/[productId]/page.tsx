@@ -1,14 +1,39 @@
 'use client'
+import { ShopCartContext } from "@/context/cartContext";
 import { ArrowCircleDown, ArrowCircleUp, ArrowRight, ArrowsClockwise, CaretDown, ChatCircleDots, Clock, Heart, Question, ShoppingCart, Star, StarHalf, Truck } from "@phosphor-icons/react";
 import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+
+type ProductProps = {
+  amount: Number
+  brand: string
+  discount: Number
+  id: string
+  image: string[]
+  name: string
+  price: number
+  reviews: [{
+    comment: string
+    stars: number
+  }]
+  shippingFree: boolean
+}
 
 export default function Product({ params }: { params: { productId: string } }) {
-  const [product, setProduct] = useState({})
+  const { addToCart } = useContext(ShopCartContext)
+  const [product, setProduct] = useState<ProductProps>({} as ProductProps)
+  const [average, setAverage] = useState<number>(0)
   
   useEffect(() => {
-    axios.get(`${process.env.API_ADDRESS}/getProduct/${params.productId}`).then(res => {
+    axios.get(`${process.env.API_ADDRESS}/products/find/${params.productId}`).then(res => {
+      const totalStars = res.data.reviews?.reduce((acc: any, review: any) => acc + review.stars, 0);
+      const averageStars = totalStars / res.data.reviews?.length;
+  
+      // Round the average stars to the nearest half
+      const roundedAverage = Math.round(averageStars * 2) / 2;
+      setAverage(roundedAverage)
       setProduct(res.data)
     })
   }, [])
@@ -37,37 +62,32 @@ export default function Product({ params }: { params: { productId: string } }) {
             </button>
           </div>
         </div>
+        
         <div className="h-[32rem] w-[32rem] rounded-lg bg-gray-200 flex items-center justify-center">
-          product image
+          {/* <Image src={product?.image[0] || ''} width={32} height={32} alt={product.name} /> */}
         </div>
         <div>
-          <h1 className="text-4xl font-semibold">Product Name</h1>
+          <h1 className="text-4xl font-semibold">{product?.name}</h1>
           <p className="flex gap-1 font-semibold">by 
-            <Link href={'/'} className="underline underline-offset-4 font-bold"> somecompany</Link>
+            <Link href={'/'} className="underline underline-offset-4 font-bold"> {product?.brand}</Link>
             <Question size={22} weight="fill" className="ml-1 cursor-pointer" /> {/*abri uma caixa informativa*/}
           </p>
           <div className="my-6 flex items-center justify-between">
-            {/*[...new Array(5)].map((_, index) => {
-              return index < Math.floor(item.stars) ? <Star size={14} weight="fill" color="#FBB833" key={index} /> :
-                    index == Math.floor(item.stars) && item.stars - Math.floor(item.stars) == 0.5 ? 
-                    <StarHalf size={14} weight="fill" color="#FBB833" key={index} /> : <Star size={14} color="#ABABAB" key={index} />
-            })*/}
             <div className="flex">
-              <Star size={22} weight="fill" color="#FBB833" />
-              <Star size={22} weight="fill" color="#FBB833" />
-              <Star size={22} weight="fill" color="#FBB833" />
-              <Star size={22} weight="fill" color="#FBB833" />
-              <StarHalf size={22} weight="fill" color="#FBB833" />
-              <p className="text-gray-400 font-medium ml-2">4.5</p>
-              
+            {[...new Array(5)].map((_, index) => {
+              return index < Math.floor(average) ? <Star size={22} weight="fill" color="#FBB833" key={index} /> :
+                    index == Math.floor(average) && average - Math.floor(average) == 0.5 ? 
+                    <StarHalf size={22} weight="fill" color="#FBB833" key={index} /> : <Star size={22} color="#ABABAB" key={index} />
+            })}
+              <p className="text-gray-400 font-medium ml-2">{average}</p>
             </div>
             <div className="flex text-gray-400 gap-2 font-medium">
               <ChatCircleDots className="text-gray-400" size={22} />
-              <p>214 reviews</p>
+              <p>{product?.reviews?.length} reviews</p>
             </div>
           </div>
           <div className="my-6 flex justify-between">
-            <p className="text-3xl font-semibold">$589</p>
+            <p className="text-3xl font-semibold">${product?.price}</p>
             <p className="text-sm flex items-center text-blue-500 font-medium">
               <Truck size={18} className="mr-2" />
               Standard Shipping
@@ -97,7 +117,7 @@ export default function Product({ params }: { params: { productId: string } }) {
           </div>
           <div className="flex gap-3">
             <button className="flex w-20 bg-gray-200 items-center justify-center py-3 rounded-xl text-gray-500 hover:bg-red-600 hover:text-white ease-in"><Heart size={24} /></button>
-            <button className="flex w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white"><ShoppingCart size={24} /> Add to cart</button>
+            <button className="flex w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white" onClick={() => addToCart(Number(product.id), product, true)}><ShoppingCart size={24} /> Add to cart</button>
           </div>
           <div className="my-4">
             <div className="flex my-1">
@@ -145,7 +165,7 @@ export default function Product({ params }: { params: { productId: string } }) {
             <div className="mt-10 bg-gray-100 h-24 flex items-center justify-around font-medium rounded-md">
               <div className="flex flex-col">
                 <p className="text-gray-500">Brand</p>
-                <p>Nike</p>          
+                <p>{product.brand}</p>          
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-500">Style</p>

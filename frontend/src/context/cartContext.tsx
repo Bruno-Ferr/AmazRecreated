@@ -22,15 +22,18 @@ type productInCart = {
 }
 
 type ProductTypes = {
-  id: number
-  url: string
-  name: string
+  amount: Number
   brand: string
-  stars: number
-  reviews: number
-  frete: boolean
+  discount: Number
+  id: string
+  image: string[]
+  name: string
   price: number
-  discount: string
+  reviews: [{
+    comment: string
+    stars: number
+  }]
+  shippingFree: boolean
 }
 
 export const ShopCartContext = createContext({} as shopCartContextProps)

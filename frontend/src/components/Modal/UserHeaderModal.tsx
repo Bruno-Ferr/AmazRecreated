@@ -1,6 +1,6 @@
 import { UserContext } from "@/context/userContext";
 import axios from "axios";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 interface UserModalProps {
   isOpen: boolean
@@ -49,7 +49,7 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
 
   if(isOpen) {
     return (
-      <div onClick={(e) => e.stopPropagation()} className="w-72 h-64 absolute rounded-lg cursor-default bg-white border border-gray-500 top-full p-4 mt-1" ref={clickoutRef}>
+      <div onClick={(e) => e.stopPropagation()} className="w-72 h-64 absolute rounded-lg cursor-default bg-white border border-gray-500 top-full right-[-120px] p-4 mt-1" ref={clickoutRef}>
       {!!user?.email ? (
         <div>
           <div className="flex justify-between">
