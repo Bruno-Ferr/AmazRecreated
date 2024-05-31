@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 //Extensão do ERC20
 contract AMZToken {
@@ -18,14 +18,15 @@ contract AMZToken {
 
     string private _name;
     string private _symbol;
+    uint decimals = 18;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     //100 * 10 ** ERC20.decimals()
     constructor(string memory name_, string memory symbol_, uint initialValue) {
         _name = name_;
         _symbol = symbol_;
-        owner = msg.sender;
-        _mint(msg.sender, initialValue);
+        owner = payable(msg.sender);
+        _mint(msg.sender, initialValue * 10 ** decimals);
     }
 
     function _update(address from, address to, uint256 value) internal virtual {
@@ -79,27 +80,43 @@ contract AMZToken {
         _;
     }
 
-    function transfer(address to, uint256 value) public virtual returns (bool) {
-        address from = msg.sender;
-        _transfer(from, to, value);
+    function transfer(address _from, address _to, uint256 value) public virtual returns (bool) {
+        _transfer(_from, _to, value);
         return true;
     }
 
    //Função earnAMZ para transferir moedas para o cliente
-   function earnAMZ(address to_, uint tokenAmount) public isOwner {
-        // Apenas o owner pode transferir moedas para o cliente
-        transfer(to_, tokenAmount);
+   function earnAMZ(uint tokenAmount) internal {
+        transfer(owner, msg.sender, tokenAmount * 10 ** decimals);
    }
 
     //Função wasteAMZ para transferir moedas do cliente para o contrato
-    function wasteAMZ(uint tokenAmount) public {
+    function wasteAMZ(uint tokenAmount) internal {
         // Apenas o cliente mensageiro pode enviar suas próprias moedas
         // Apenas o contrato pode receber
-        transfer(owner, tokenAmount);
+        transfer(msg.sender, owner, tokenAmount * 10 ** decimals);
     }
     
     //Apenas o usuário pode ver o valor em sua carteira
     function seeBalance() public view returns(uint) {
         return wallets[msg.sender];
+    }
+
+    function pay(bool isAmz, uint tokenAmount, uint _value) public payable {//_value já em wei (conversão no js)
+        if(isAmz) {
+            require(wallets[msg.sender] >= _value, "You don't have enough amz"); //Check the amount of loyalty points in the wallet
+            wasteAMZ(tokenAmount); //Lose loyalty points
+        } else {
+            require(msg.value >= _value, "You don't have enough ether"); //checar se o valor pago é maior ou igual ao valor da compra
+            earnAMZ(tokenAmount);
+        }
+    }
+    
+    //corrigir ganhar ether, precisa verificar o quanto ele vai ganhar, valor do produto em ether é diferente do valor em AMZ
+    function withdrawl() public isOwner {
+        uint256 amount = address(this).balance;
+        require(amount > 0, "Nothing to withdraw; contract balance empty");
+
+        payable(msg.sender).transfer(amount);
     }
 }

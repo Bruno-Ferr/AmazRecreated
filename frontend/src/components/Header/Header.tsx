@@ -24,7 +24,7 @@ export default function Header() {
     <div className="static">
     <div className="w-full">
       <div className="xl:max-w-7xl m-auto mt-8">
-        <div className="flex items-center justify-between mb-3 w-full">
+        <div className="flex items-center justify-between mb-3 w-full relative">
           <div>
             <Link
               href="/"

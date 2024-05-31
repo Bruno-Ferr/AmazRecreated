@@ -4,12 +4,15 @@ import { ArrowLeft, Coins, Minus, Plus, Truck, X } from "@phosphor-icons/react"
 import Image from "next/image"
 import Link from "next/link"
 import { useCallback, useContext, useEffect } from "react"
-import { ethers } from "ethers";
+import { ethers, parseEther } from "ethers";
 import axios from "axios"
 import Product from "../products/page"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
-import { UserContext } from "@/context/userContext"
+import { UserContext, connectContract } from "@/context/userContext"
+import { Contract } from "ethers"
+import ABI from '../../../contract/abis/amz.json'
+
 
 export default function Cart() {
   const {cartList, setCartNotifications, removeFromCart, addToCart, removeAllFromCart} = useContext(ShopCartContext)
@@ -35,6 +38,20 @@ export default function Cart() {
       toast.success("Purchase completed!", {theme: 'colored'});
       router.push('./congrats')
     }
+  }
+
+  async function purchaseEth() {
+    //validar preço do produto
+    const contract = await connectContract();
+
+    await contract.connect(user.signer).pay(false, 1, parseEther('0.0054'), {value: parseEther('0.0054')})
+    
+    const balance = await contract.connect(user.signer).seeBalance()
+    setUser((prev: any) => ({
+      ...prev, 
+      balance: ethers.formatEther(balance)
+    }))
+    toast.success('compra concluida')
   }
   
   useEffect(() => {
@@ -119,7 +136,7 @@ export default function Cart() {
                   </div>
                   <p className="ml-2">+ ${(totalPrice / 50).toFixed(2)}</p>
                 </div>
-                <button onClick={() => purchase()} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
+                <button onClick={() => purchaseEth()} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
               </div>
             </div>
             <div className="flex w-full border bg-gray-200 rounded-lg h-11 mt-4">
