@@ -5,6 +5,8 @@ import { findProductDB } from "../database/productsDb";
 import { earnAMZ, seeBalance } from "../contract";
 import fs from 'fs'
 import { User } from "../database/models/user";
+import { Product } from "../database/models/products";
+import { Booking } from "../database/models/booking";
 
 interface purchaseResponse {
   message: string
@@ -12,26 +14,42 @@ interface purchaseResponse {
 }
 
 export async function purchaseController(req: Request, res: Response) {
-  //Receber produtos que foram comprados
-  //Receber usuário que comprou e sua carteira metamask
-  //const provider:any = req.body;
   const {userAddr, purchase} = req.body
 
-  const returnData: purchaseResponse = {
-    message: "Transaction successfully", 
-  }
+  if(!userAddr) return res.status(404).send({message: 'Connect to your wallet and try again'})
+  //Usuário precisa estar cadastrado para comprar (checagem)
   
   try {    
-    const newPosition = 0; //Beginning of the array
-    await User.findOneAndUpdate(
-      { address: userAddr },
-      { $push: { purchases: { $each: [purchase], $position: newPosition } } },
-      { new: true }
-    );
+    let totalPrice = 0
+    const productsFromDb = await Promise.all(purchase.map(async (item: any) => {
+      const foundProduct = await Product.findOne({ id: item.product.id });
+      if (!foundProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      if(item.amount > foundProduct.amount!) {
+        return res.status(404).json({ message: "Product doesn't have enough amount" });
+      }
+      totalPrice = (item.amount * foundProduct.price!) + totalPrice
+      // return {
+      //   id: foundProduct.id,
+      //   name: foundProduct.name,
+      //   brand: foundProduct.brand,
+      //   price: foundProduct.price,
+      //   shippingFree: foundProduct.shippingFree,
+      //   discount: foundProduct.discount,
+      //   amount: item.amount
+      // }
+    }));
 
-    return res.status(200).send({message: "Transaction successfully", balance: ethers.formatEther(0)});
+    // await Promise.all(productsFromDb.map(async (item: any) => {
+    //   await Product.findOneAndUpdate({ id: item.id },{ $inc: { amount: -item.amount }}); //Remove amount
+    //   const book = new Booking({products: item, userAddress: userAddr, tax: 0, totalPrice, date: new Date()})
+    //   book.save();
+    // }));
+
+    return res.status(200).send({message: "Transaction successfully", totalPrice});
   } catch (err) {
-    throw new Error("Something went wrong earn AMZ")
+    console.log(err)
   }
 }
 

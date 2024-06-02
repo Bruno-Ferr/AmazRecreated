@@ -4,7 +4,7 @@ import { ArrowLeft, Coins, Minus, Plus, Truck, X } from "@phosphor-icons/react"
 import Image from "next/image"
 import Link from "next/link"
 import { useCallback, useContext, useEffect } from "react"
-import { ethers, parseEther } from "ethers";
+import { WeiPerEther, ethers, parseEther } from "ethers";
 import axios from "axios"
 import Product from "../products/page"
 import { toast } from "react-toastify"
@@ -40,18 +40,31 @@ export default function Cart() {
     }
   }
 
-  async function purchaseEth() {
+  async function purchaseEth(withAmz: boolean) {
+    const data = {
+      userAddr: user.wallet,
+      purchase: cartList
+    }
+
     //validar preço do produto
+    const res = await axios.post(`${process.env.API_ADDRESS}/purchase`, data)
+    if(res.status != 200) return toast.error('Something went wrong') 
     const contract = await connectContract();
 
+    const totalInEther = (res.data.totalPrice * 0.00027).toString()
+    const amzEarned = !withAmz ? Math.floor(res.data.totalPrice / 20) : 0
+    console.log(amzEarned)
+    console.log(totalInEther)
+    console.log(user.wallet)
     await contract.connect(user.signer).pay(false, 1, parseEther('0.0054'), {value: parseEther('0.0054')})
-    
-    const balance = await contract.connect(user.signer).seeBalance()
-    setUser((prev: any) => ({
-      ...prev, 
-      balance: ethers.formatEther(balance)
-    }))
-    toast.success('compra concluida')
+    //await contract.connect(user.wallet).pay(withAmz, amzEarned, parseEther(totalInEther), {value: parseEther(totalInEther)}) //Se der erro, reverter backend de agendamento
+
+    // const balance = await contract.connect(user.signer).seeBalance()
+    // setUser((prev: any) => ({
+    //   ...prev, 
+    //   balance: ethers.formatEther(balance)
+    // }))
+    toast.success('Purchase concluded')
   }
   
   useEffect(() => {
@@ -136,7 +149,7 @@ export default function Cart() {
                   </div>
                   <p className="ml-2">+ ${(totalPrice / 50).toFixed(2)}</p>
                 </div>
-                <button onClick={() => purchaseEth()} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
+                <button onClick={() => purchaseEth(false)} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
               </div>
             </div>
             <div className="flex w-full border bg-gray-200 rounded-lg h-11 mt-4">
