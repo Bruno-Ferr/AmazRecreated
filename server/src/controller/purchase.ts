@@ -30,22 +30,22 @@ export async function purchaseController(req: Request, res: Response) {
         return res.status(404).json({ message: "Product doesn't have enough amount" });
       }
       totalPrice = (item.amount * foundProduct.price!) + totalPrice
-      // return {
-      //   id: foundProduct.id,
-      //   name: foundProduct.name,
-      //   brand: foundProduct.brand,
-      //   price: foundProduct.price,
-      //   shippingFree: foundProduct.shippingFree,
-      //   discount: foundProduct.discount,
-      //   amount: item.amount
-      // }
+      return {
+        id: foundProduct.id,
+        name: foundProduct.name,
+        brand: foundProduct.brand,
+        price: foundProduct.price,
+        shippingFree: foundProduct.shippingFree,
+        discount: foundProduct.discount,
+        amount: item.amount
+      }
     }));
 
-    // await Promise.all(productsFromDb.map(async (item: any) => {
-    //   await Product.findOneAndUpdate({ id: item.id },{ $inc: { amount: -item.amount }}); //Remove amount
-    //   const book = new Booking({products: item, userAddress: userAddr, tax: 0, totalPrice, date: new Date()})
-    //   book.save();
-    // }));
+    await Promise.all(productsFromDb.map(async (item: any) => {
+      await Product.findOneAndUpdate({ id: item.id },{ $inc: { amount: -item.amount }}); //Remove amount
+      const book = new Booking({products: item, userAddress: userAddr, tax: 0, totalPrice, date: new Date()})
+      book.save();
+    }));
 
     return res.status(200).send({message: "Transaction successfully", totalPrice});
   } catch (err) {
