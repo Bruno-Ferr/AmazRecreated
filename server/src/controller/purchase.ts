@@ -29,6 +29,7 @@ export async function purchaseController(req: Request, res: Response) {
       if(item.amount > foundProduct.amount!) {
         return res.status(404).json({ message: "Product doesn't have enough amount" });
       }
+      await Product.findOneAndUpdate({ id: item.product.id},{ $inc: { amount: -item.amount }}); 
       totalPrice = (item.amount * foundProduct.price!) + totalPrice
       return {
         id: foundProduct.id,
@@ -41,16 +42,25 @@ export async function purchaseController(req: Request, res: Response) {
       }
     }));
 
-    await Promise.all(productsFromDb.map(async (item: any) => {
-      await Product.findOneAndUpdate({ id: item.id },{ $inc: { amount: -item.amount }}); //Remove amount
-      const book = new Booking({products: item, userAddress: userAddr, tax: 0, totalPrice, date: new Date()})
-      book.save();
-    }));
+    const book = new Booking({products: productsFromDb, userAddress: userAddr, tax: 0, totalPrice, date: new Date()})
+    const savedBooking = await book.save();
 
-    return res.status(200).send({message: "Transaction successfully", totalPrice});
+    return res.status(200).send({message: "Transaction successfully", totalPrice, bookId: savedBooking._id});
   } catch (err) {
     console.log(err)
   }
+}
+
+export async function undoPurchase(req: Request, res: Response) {
+  const {id: bookingId} = req.params
+  console.log(bookingId)
+  const foundBooking = await Booking.findOne({ _id: bookingId });
+  foundBooking?.products.map(async (product) => {
+    await Product.findOneAndUpdate({ id: product.id},{ $inc: { amount: +product.amount! }}); 
+  })
+
+  await Booking?.deleteOne({ _id: bookingId })
+  return res.status(200).send({message: "Something went wrong"});
 }
 
 export async function goToCheckout(req: Request, res: Response) {

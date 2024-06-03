@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
-import { goToCheckout, purchaseController } from "./controller/purchase";
+import { goToCheckout, purchaseController, undoPurchase } from "./controller/purchase";
 import cors from 'cors';
 import { addProduct, findProduct, getProducts } from "./controller/products";
 import { addClient, getClient, getClientBalance, getClientLastPurchase } from "./controller/client";
@@ -22,6 +22,7 @@ app.get("/", (request: Request, response: Response) => {
 }); 
 
 app.post("/purchase", purchaseController); 
+app.delete("/purchase/:id", undoPurchase); 
 app.post("/createLink", goToCheckout); 
 app.get("/products", getProducts); 
 app.get("/products/find/:product_id", findProduct); 

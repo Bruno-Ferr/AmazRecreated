@@ -3,7 +3,7 @@ import { ShopCartContext } from "@/context/cartContext"
 import { ArrowLeft, Coins, Minus, Plus, Truck, X } from "@phosphor-icons/react"
 import Image from "next/image"
 import Link from "next/link"
-import { useCallback, useContext, useEffect } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { WeiPerEther, ethers, parseEther } from "ethers";
 import axios from "axios"
 import Product from "../products/page"
@@ -13,10 +13,16 @@ import { UserContext, connectContract } from "@/context/userContext"
 import { Contract } from "ethers"
 import ABI from '../../../contract/abis/amz.json'
 
+interface ProviderRpcError extends Error {
+  message: string;
+  code: number;
+  data?: unknown;
+}
 
 export default function Cart() {
   const {cartList, setCartNotifications, removeFromCart, addToCart, removeAllFromCart} = useContext(ShopCartContext)
   const {user, setUser} = useContext(UserContext)
+  const [loading, setLoading] = useState(false)
   const totalPrice = cartList.reduce((total, item) => {
     return total + (item.amount * Number(item.product.price))
   }, 0)
@@ -40,34 +46,38 @@ export default function Cart() {
     }
   }
 
-  async function purchaseEth(withAmz: boolean) {
+  async function purchaseEth(withAmz: boolean) { //Trocar para comprar com AMZ ou não
+    setLoading(true)
     const data = {
       userAddr: user.wallet,
       purchase: cartList
     }
-
+    let bookingId
     try {
-      //validar preço do produto
       const res = await axios.post(`${process.env.API_ADDRESS}/purchase`, data)
+
+      bookingId = res.data.bookId
       if(res.status != 200) return toast.error('Something went wrong') 
       const contract = await connectContract();
 
       const totalInEther = (res.data.totalPrice * 0.00027).toString()
       const amzEarned = !withAmz ? Math.floor(res.data.totalPrice / 20) : 0
 
-      const web3 = await contract.connect(user.signer).pay(withAmz, amzEarned, parseEther(totalInEther), {value: parseEther(totalInEther)}) 
-      //Se der erro, reverter backend de agendamento
-      //Como tratar erros web3
+      await contract.connect(user.signer).pay(withAmz, amzEarned, parseEther(totalInEther), {value: withAmz ? parseEther(totalInEther) : 0}) 
 
       // const balance = await contract.connect(user.signer).seeBalance()
       // setUser((prev: any) => ({
       //   ...prev, 
       //   balance: ethers.formatEther(balance)
       // }))
+      
       toast.success('Purchase concluded')
-    } catch (error) {
-
+    } catch (err) {
+      //Se der erro, reverter backend de agendamento
+      const res = await axios.delete(`${process.env.API_ADDRESS}/purchase/${bookingId}`)
+      toast.error(res.data.message, {theme: 'colored'})
     }
+    setLoading(false)
   }
   
   useEffect(() => {
@@ -152,7 +162,17 @@ export default function Cart() {
                   </div>
                   <p className="ml-2">+ ${(totalPrice / 50).toFixed(2)}</p>
                 </div>
-                <button onClick={() => purchaseEth(false)} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Proceed to checkout</button>
+                {loading ? (
+                  <div className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">
+                    Loading...
+                  </div>
+                ) : (
+                  <div>
+                    <button onClick={() => purchaseEth(false)} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Buy with Ether</button>
+                    <p>Or</p>
+                    <button onClick={() => purchaseEth(true)} className="bg-[#5900ff] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Buy with Amz points</button>
+                  </div>
+                ) }
               </div>
             </div>
             <div className="flex w-full border bg-gray-200 rounded-lg h-11 mt-4">
