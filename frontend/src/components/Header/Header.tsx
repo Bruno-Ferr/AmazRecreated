@@ -68,7 +68,7 @@ export default function Header() {
               <span className="absolute top-[-5px] right-[-5px] px-[6px] py-[2px] bg-[#FF9900] text-[10px] text-white rounded-full">{cartNotifications}</span>
             }
           </Link>
-          <button className="flex items-center relative" onClick={() => setOpenUserModal(prev => !openUserModal)}> 
+          <button className="flex items-center relative" onClick={(e) => setOpenUserModal(prev => !openUserModal)}> 
             <Image
               src="/ToYou.jpg"
               width={40}
