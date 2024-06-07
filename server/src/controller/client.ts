@@ -15,19 +15,16 @@ export async function getClient(req: Request, res: Response) {
   //pegar do mongo
 
   const [userFromdb] = await User.find({
-    $or: [
-      { address: id },
-      { email: id }
-    ]
+    address: id
   })
 
   if(!userFromdb) return //avisar "User não encontrado"
 
   const user = {
     name: userFromdb.name,
-    email: userFromdb.email
+    wallet: userFromdb.address
   }
-  console.log(user)
+
   return res.status(200).json({user})
 }
 
@@ -52,20 +49,17 @@ export async function getClientBalance(req: Request, res: Response) { //Essa pod
 }
 
 export async function addClient(req: Request, res: Response) {
-  const {user} = req.body
+  const {userName, userAddress} = req.body
 
   const userExists = await User.find({
-    $or: [
-      { address: user?.address },
-      { email: user?.email }
-    ]
+    address: userAddress
   })
 
   if(userExists.length > 0) return res.status(400).send({message: "User already exists"})
 
   const infos = {
-    ...user,
-    address: user?.address || '',
+    userName,
+    address: userAddress,
     purchases: []
   }
 

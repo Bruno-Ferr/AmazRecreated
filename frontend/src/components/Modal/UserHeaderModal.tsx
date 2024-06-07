@@ -2,7 +2,8 @@ import { UserContext } from "@/context/userContext";
 import { ArrowLeft, Coins, Copy, Scroll } from "@phosphor-icons/react";
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import './styles.css';
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
 
 interface UserModalProps {
   isOpen: boolean
@@ -11,7 +12,7 @@ interface UserModalProps {
 
 export default function UserModal({isOpen, setOpen}: UserModalProps) {
   const {user, setUser, login, signUp, connectWallet} = useContext(UserContext)
-  const [signUpFormOpen, setSignUpFormOpen] = useState(true)
+  const [signUpFormOpen, setSignUpFormOpen] = useState(false)
   const [walletInput, setWalletInput] = useState<any>()
   const [userName, setUserName] = useState<any>('')
   const clickoutRef = useRef<HTMLDivElement>(null);
@@ -22,6 +23,7 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
         clickoutRef.current &&
         !clickoutRef.current.contains(event.target as Node)
       ) {
+        setSignUpFormOpen(false)
         setOpen(false);
       }
     };
@@ -38,22 +40,41 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
     return address.substring(0, 6) + '...' + address.substring(address.length - 4);
   }
 
-  // if(signUpFormOpen) {
-  //   return (
-  //     <div>
-  //       <input type="text" name="name" placeholder="Name" onChange={(e) => setUserName(e.target.value)} />
-  //       {!walletInput ? (
-  //         <button onClick={() => setWalletInput('0xf1308F8A173B4CAD00E034')}>Connect you wallet</button>
-  //       ) : (
-  //         <div>
-  //           <p>Address:</p>
-  //           <p>{formatWalletAddress(walletInput)}</p>
-  //         </div>
-  //       )}
-  //       <button>Save</button>
-  //     </div>
-  //   )
-  // }
+  const getAddress = async () => {
+    try {
+      const { ethereum } = window;
+      if(!ethereum) return console.log("Install MetaMask");
+
+      const provider = new ethers.BrowserProvider(ethereum);
+
+      const accounts = await provider.send("eth_requestAccounts", []);
+
+      if (accounts.length > 0) {
+        setWalletInput(accounts[0])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const createUser = async () => {
+    const user = {
+      userName,
+      userAddress: walletInput
+    }
+
+    try{
+      await axios.post(`${process.env.API_ADDRESS}/addUser`, user)
+  
+      toast.success('User created', {theme: 'colored'})
+      //Set user
+      setSignUpFormOpen(false)
+    } catch (err) {
+      if(err instanceof Error) {
+        toast.error(err.response.data.message, {theme: 'colored'}) //Verificar como tipar da maneira correta
+      }
+    }
+  }
 
   if(isOpen) {
     return (
@@ -71,15 +92,15 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
             <label htmlFor="" className="mt-1">Address:</label>
             {!walletInput ? (
               <button 
-                className="clickToConnect text-blue-500 py-2 easy-in-out duration-300 rounded-md hover:bg-blue-500 hover:text-white hover:before:content-[attr(before)] before:content-[attr(after)]"
+                className="text-blue-500 py-2 easy-in-out duration-300 rounded-md hover:bg-blue-500 hover:text-white hover:before:content-[attr(before)] before:content-[attr(after)]"
                 before="Click to connect"
                 after="Connect your wallet"
-                onClick={() => setWalletInput('0xf1308F8A173B4CAD00E034')}
+                onClick={() => getAddress()}
               />
             ) : (
               <p>{formatWalletAddress(walletInput)}</p>
             )}
-            <button className="text-white font-medium bg-orange-400 rounded-md py-2 w-full mt-8">Save</button>
+            <button className="text-white font-medium bg-orange-400 rounded-md py-2 w-full mt-8" onClick={() => createUser()}>Save</button>
           </div>
         ) : !!user?.wallet ? ( 
           <div className="font-medium flex flex-col">

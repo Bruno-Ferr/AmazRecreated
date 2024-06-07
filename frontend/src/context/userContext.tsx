@@ -18,7 +18,6 @@ interface UserProps {
 interface UserContextProps {
   user: UserProps
   setUser: (value: any) => void 
-  login: (data: any) => void
   signUp: (data: any) => void
   connectWallet: () => void
 }
@@ -60,6 +59,7 @@ export function UserProvider({children}: UserProviderProps) {
       const accounts = await provider.send("eth_requestAccounts", []);
 
       if (accounts.length > 0) {
+        const res = await axios.get(`${process.env.API_ADDRESS}/client/${accounts[0]}`)
         const signer = await provider.getSigner();
         const chain = Number((await provider.getNetwork()).chainId);
 
@@ -68,9 +68,8 @@ export function UserProvider({children}: UserProviderProps) {
         const balance = await contract.connect(signer).seeBalance()
 
         setUser((prev: any) => ({
-          ...prev, 
-          balance: ethers.formatEther(balance),
-          wallet: accounts[0], 
+          ...res.data.user, 
+          balance: ethers.formatEther(balance), 
           signer, 
           currentChain: chain,
           provider,
@@ -82,18 +81,13 @@ export function UserProvider({children}: UserProviderProps) {
     }
   }
 
-  const login = async (data: string) => {
-    const res = await axios.get(`${process.env.API_ADDRESS}/client/${data}`)
-    setUser(res.data.user)
-  }
-
   const signUp = async (data: any) => {
     await axios.post(`${process.env.API_ADDRESS}/addUser`, data)
     setUser({...data.user, balance: 0}) 
   }
 
   return (
-    <UserContext.Provider value={{user, setUser, login, signUp, connectWallet}}>
+    <UserContext.Provider value={{user, setUser, signUp, connectWallet}}>
       {children}
     </UserContext.Provider>
   )
