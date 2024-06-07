@@ -19,7 +19,7 @@ export async function getClient(req: Request, res: Response) {
   })
 
   if(!userFromdb) return //avisar "User não encontrado"
-
+  console.log(userFromdb)
   const user = {
     name: userFromdb.name,
     wallet: userFromdb.address
@@ -58,7 +58,7 @@ export async function addClient(req: Request, res: Response) {
   if(userExists.length > 0) return res.status(400).send({message: "User already exists"})
 
   const infos = {
-    userName,
+    name: userName,
     address: userAddress,
     purchases: []
   }

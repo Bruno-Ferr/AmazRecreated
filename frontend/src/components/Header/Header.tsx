@@ -20,6 +20,7 @@ export default function Header() {
   const [openUserModal, setOpenUserModal] = useState(false)
   const {user} = useContext(UserContext)
 
+  console.log(user)
   return (
     <div className="static">
     <div className="w-full">

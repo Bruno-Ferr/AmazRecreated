@@ -66,7 +66,7 @@ export function UserProvider({children}: UserProviderProps) {
         const contract = await connectContract()
 
         const balance = await contract.connect(signer).seeBalance()
-
+        console.log(res.data.user)
         setUser((prev: any) => ({
           ...res.data.user, 
           balance: ethers.formatEther(balance), 
