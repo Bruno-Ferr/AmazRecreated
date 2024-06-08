@@ -1,6 +1,6 @@
 'use client'
 import axios, { AxiosError } from "axios";
-import { ethers, Contract } from "ethers";
+import { ethers, Contract, BaseContract } from "ethers";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import ABI from '../contract/abis/amz.json'
 import { toast } from "react-toastify";
@@ -63,9 +63,9 @@ export function UserProvider({children}: UserProviderProps) {
         const signer = await provider.getSigner();
         const chain = Number((await provider.getNetwork()).chainId);
 
-        const contract = await connectContract()
+        const contract: any = await connectContract()
 
-        const balance = await contract.connect(signer).seeBalance()
+        const balance = contract.connect(signer).seeBalance()
 
         setUser((prev: any) => ({
           ...res.data.user, 

@@ -31,11 +31,11 @@ export default function CongratulationPage() {
   useEffect(() => {
     cleanCart()
     async function getLastPurchase() {
-      const res = await axios.get(`${process.env.API_ADDRESS}/clientLastPurchase/${user.email}`)
+      const res = await axios.get(`${process.env.API_ADDRESS}/clientLastPurchase/${user.wallet}`)
       setLastPurchase(res.data.purchase)
     }
 
-    if(user.email != undefined) {
+    if(user.wallet != undefined) {
       getLastPurchase()
     }
   }, [user])

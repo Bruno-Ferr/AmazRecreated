@@ -58,7 +58,7 @@ export default function Cart() {
 
       bookingId = res.data.bookId
       if(res.status != 200) return toast.error('Something went wrong') 
-      const contract = await connectContract();
+      const contract: any = await connectContract();
 
       const totalInEther = (res.data.totalPrice * 0.00027).toString()
       const amzEarned = !withAmz ? Math.floor(res.data.totalPrice / 20) : 0
