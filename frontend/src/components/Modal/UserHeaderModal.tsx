@@ -1,7 +1,7 @@
 import { UserContext } from "@/context/userContext";
 import { ArrowLeft, Coins, Copy, Scroll } from "@phosphor-icons/react";
 import axios, { AxiosError } from "axios";
-import { useContext, useEffect, useRef, useState } from "react";
+import { ButtonHTMLAttributes, useContext, useEffect, useRef, useState } from "react";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
 
@@ -94,9 +94,7 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
             <label htmlFor="" className="mt-1">Address:</label>
             {!user.wallet ? (
               <button 
-                className="text-blue-500 py-2 easy-in-out duration-300 rounded-md hover:bg-blue-500 hover:text-white hover:before:content-[attr(before)] before:content-[attr(after)]"
-                before="Click to connect"
-                after="Connect your wallet"
+                className={`text-blue-500 py-2 easy-in-out duration-300 rounded-md hover:bg-blue-500 hover:text-white hover:before:content-["Click_to_connect"] before:content-["Connect_your_wallet"]`}
                 onClick={() => getAddress()}
               />
             ) : (
