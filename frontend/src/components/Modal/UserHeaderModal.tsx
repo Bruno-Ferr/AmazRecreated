@@ -1,6 +1,6 @@
 import { UserContext } from "@/context/userContext";
 import { ArrowLeft, Coins, Copy, Scroll } from "@phosphor-icons/react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
@@ -11,7 +11,7 @@ interface UserModalProps {
 }
 
 export default function UserModal({isOpen, setOpen}: UserModalProps) {
-  const {user, setUser, login, signUp, connectWallet} = useContext(UserContext)
+  const {user, setUser, signUp, connectWallet} = useContext(UserContext)
   const [signUpFormOpen, setSignUpFormOpen] = useState(false)
   const [walletInput, setWalletInput] = useState<any>()
   const [userName, setUserName] = useState<any>('')
@@ -50,7 +50,9 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
       const accounts = await provider.send("eth_requestAccounts", []);
 
       if (accounts.length > 0) {
-        setWalletInput(accounts[0])
+        setUser({
+          wallet: accounts[0]
+        })
       }
     } catch (error) {
       console.log(error)
@@ -58,20 +60,20 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
   }
 
   const createUser = async () => {
-    const user = {
+    const userData = {
       userName,
-      userAddress: walletInput
+      userAddress: user.wallet
     }
 
     try{
-      await axios.post(`${process.env.API_ADDRESS}/addUser`, user)
+      await axios.post(`${process.env.API_ADDRESS}/addUser`, userData)
   
       toast.success('User created', {theme: 'colored'})
       //Set user
       setSignUpFormOpen(false)
     } catch (err) {
-      if(err instanceof Error) {
-        toast.error(err.response.data.message, {theme: 'colored'}) //Verificar como tipar da maneira correta
+      if(err instanceof AxiosError) {
+        toast.error(err?.response?.data.message, {theme: 'colored'}) //Verificar como tipar da maneira correta
       }
     }
   }
@@ -90,7 +92,7 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
               className="border border-gray-300 p-1 rounded-md"
             />
             <label htmlFor="" className="mt-1">Address:</label>
-            {!walletInput ? (
+            {!user.wallet ? (
               <button 
                 className="text-blue-500 py-2 easy-in-out duration-300 rounded-md hover:bg-blue-500 hover:text-white hover:before:content-[attr(before)] before:content-[attr(after)]"
                 before="Click to connect"
@@ -98,11 +100,11 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
                 onClick={() => getAddress()}
               />
             ) : (
-              <p>{formatWalletAddress(walletInput)}</p>
+              <p className="m-auto">{formatWalletAddress(user.wallet)}</p>
             )}
             <button className="text-white font-medium bg-orange-400 rounded-md py-2 w-full mt-8" onClick={() => createUser()}>Save</button>
           </div>
-        ) : !!user?.wallet ? ( 
+        ) : !!user?.name ? ( 
           <div className="font-medium flex flex-col">
             <div className="flex justify-center">
               <h2 className="text-lg">{user?.name}</h2>  

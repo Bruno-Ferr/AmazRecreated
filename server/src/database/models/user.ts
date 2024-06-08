@@ -3,7 +3,6 @@ import mongoose, { Schema } from "mongoose";
 const UserSchema = new Schema({
   name: String,
   address: String,
-  email: String,
   purchases: [{
     products: [{
       id: String,

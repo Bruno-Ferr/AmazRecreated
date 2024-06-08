@@ -18,11 +18,10 @@ export async function getClient(req: Request, res: Response) {
     address: id
   })
 
-  if(!userFromdb) return //avisar "User não encontrado"
-  console.log(userFromdb)
+  if(!userFromdb) return res.status(404).send('User not found') //avisar "User não encontrado"/redirect to signup
+
   const user = {
-    name: userFromdb.name,
-    wallet: userFromdb.address
+    name: userFromdb.name
   }
 
   return res.status(200).json({user})

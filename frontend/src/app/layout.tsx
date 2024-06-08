@@ -9,7 +9,7 @@ import { UserProvider } from "@/context/userContext";
 const font = Red_Hat_Display({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 export const metadata: Metadata = {
-  title: "Amazon",
+  title: "Amaz",
   description: "",
 };
 

@@ -18,9 +18,8 @@ export default function Header() {
   const [cartNotifies, setCartNotifies] = useState()
   const { cartNotifications } = useContext(ShopCartContext)
   const [openUserModal, setOpenUserModal] = useState(false)
-  const {user} = useContext(UserContext)
+  const { user } = useContext(UserContext)
 
-  console.log(user)
   return (
     <div className="static">
     <div className="w-full">
@@ -32,8 +31,8 @@ export default function Header() {
               className="self-center"
             >
               <Image
-                src="/AmazonLogo.png"
-                alt="Amazon Logo"
+                src="/Amaz.png"
+                alt="Amaz Logo"
                 //className="dark:invert"
                 width={125}
                 height={48}

@@ -1,12 +1,12 @@
 'use client'
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ethers, Contract } from "ethers";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import ABI from '../contract/abis/amz.json'
+import { toast } from "react-toastify";
 
 interface UserProps {
   name: string
-  email: string
   balance: number
   wallet?: any
   signer?: any
@@ -28,7 +28,7 @@ interface UserProviderProps {
 
 export const connectContract = async () => {
   try {
-    return new Contract("0x5FbDB2315678afecb367f032d93F642f64180aa3", ABI);
+    return new Contract(process.env.CONTRACT_ADDRESS!, ABI);
   } catch (error) {
       console.error("Error connecting to contract:", error);
       throw error; // Rethrow the error to handle it elsewhere if needed
@@ -52,7 +52,7 @@ export function UserProvider({children}: UserProviderProps) {
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
-      if(!ethereum) return console.log("Install MetaMask");
+      if(!ethereum) return toast.error('Metamask not found, please install', {theme: 'colored'});
 
       const provider = new ethers.BrowserProvider(ethereum);
 
@@ -66,9 +66,10 @@ export function UserProvider({children}: UserProviderProps) {
         const contract = await connectContract()
 
         const balance = await contract.connect(signer).seeBalance()
-        console.log(res.data.user)
+
         setUser((prev: any) => ({
           ...res.data.user, 
+          wallet: accounts[0],
           balance: ethers.formatEther(balance), 
           signer, 
           currentChain: chain,
@@ -77,7 +78,9 @@ export function UserProvider({children}: UserProviderProps) {
         }))
       }
     } catch (error) {
-      console.log(error)
+      if(error instanceof AxiosError) {
+        toast.error(error?.response?.data, {theme: 'colored'})
+      }
     }
   }
 
