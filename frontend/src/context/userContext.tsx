@@ -20,6 +20,7 @@ interface UserContextProps {
   setUser: (value: any) => void 
   signUp: (data: any) => void
   connectWallet: () => void
+  logout: () => void
 }
 
 interface UserProviderProps {
@@ -41,12 +42,11 @@ export function UserProvider({children}: UserProviderProps) {
   const [user, setUser] = useState<UserProps>({} as UserProps) 
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await axios.get(`${process.env.API_ADDRESS}/client/1`, )
-      setUser(res.data.user)
-    }
+    const userData = localStorage.getItem('user');
 
-    fetchUser()
+    if(userData) {
+      setUser(JSON.parse(userData))
+    }
   }, [])
 
   const connectWallet = async () => {
@@ -67,7 +67,7 @@ export function UserProvider({children}: UserProviderProps) {
 
         const balance = contract.connect(signer).seeBalance()
 
-        setUser((prev: any) => ({
+        const userData = {
           ...res.data.user, 
           wallet: accounts[0],
           balance: ethers.formatEther(balance), 
@@ -75,7 +75,10 @@ export function UserProvider({children}: UserProviderProps) {
           currentChain: chain,
           provider,
           isAuthenticated: true
-        }))
+        }
+
+        setUser((prev: any) => (userData))
+        localStorage.setItem('user', JSON.stringify(userData))
       }
     } catch (error) {
       if(error instanceof AxiosError) {
@@ -89,8 +92,13 @@ export function UserProvider({children}: UserProviderProps) {
     setUser({...data.user, balance: 0}) 
   }
 
+  const logout = async () => {
+    setUser({} as UserProps)
+    localStorage.removeItem('user')
+  }
+
   return (
-    <UserContext.Provider value={{user, setUser, signUp, connectWallet}}>
+    <UserContext.Provider value={{user, setUser, signUp, connectWallet, logout}}>
       {children}
     </UserContext.Provider>
   )

@@ -11,7 +11,7 @@ interface UserModalProps {
 }
 
 export default function UserModal({isOpen, setOpen}: UserModalProps) {
-  const {user, setUser, signUp, connectWallet} = useContext(UserContext)
+  const {user, setUser, signUp, connectWallet, logout} = useContext(UserContext)
   const [signUpFormOpen, setSignUpFormOpen] = useState(false)
   const [walletInput, setWalletInput] = useState<any>()
   const [userName, setUserName] = useState<any>('')
@@ -102,24 +102,29 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
             )}
             <button className="text-white font-medium bg-orange-400 rounded-md py-2 w-full mt-8" onClick={() => createUser()}>Save</button>
           </div>
-        ) : !!user?.name ? ( 
-          <div className="font-medium flex flex-col">
-            <div className="flex justify-center">
-              <h2 className="text-lg">{user?.name}</h2>  
+        ) : true ? ( 
+          <div className="font-medium flex flex-col justify-between h-full">
+            <div>
+              <div className="flex justify-center">
+                <h2 className="text-lg">{user?.name}John Doe</h2>  
+              </div>
+              <button className="flex flex-row justify-between mt-2 w-full">
+                <p>Wallet:</p>  
+                <p>{formatWalletAddress(user?.wallet)}</p>  
+                <Copy size={18} />
+              </button>
+              <div className="w-full h-[1px] bg-gray-300 my-2" />
+              <div className="flex justify-end mt-2 text-blue-600">
+                <Coins size={22} />
+                <p className="ml-2"> {user.balance} AMZ</p>
+              </div>
+              <button className="flex justify-end mt-2 w-full">
+                <Scroll size={22} />
+                Last purchases
+              </button>
             </div>
-            <button className="flex justify-between mt-2">
-              <p>Wallet:</p>  
-              <p>{formatWalletAddress(user?.wallet)}</p>  
-              <Copy size={18} />
-            </button>
-            <div className="w-full h-[1px] bg-gray-300 my-2" />
-            <div className="flex justify-end mt-2 text-blue-600">
-              <Coins size={22} />
-              <p className="ml-2"> {user.balance} AMZ</p>
-            </div>
-            <button className="flex justify-end mt-2">
-              <Scroll size={22} />
-              Last purchases
+            <button onClick={(e) =>{ e.stopPropagation(); logout()}} className="text-white font-medium bg-red-600 rounded-md py-1 w-1/2 mx-auto items-end">
+              Exit
             </button>
           </div>
         ) : (
