@@ -73,6 +73,7 @@ export default function Cart() {
       
       toast.success('Purchase concluded')
     } catch (err) {
+      console.log(err)
       //Se der erro, reverter backend de agendamento
       const res = await axios.delete(`${process.env.API_ADDRESS}/purchase/${bookingId}`)
       toast.error(res.data.message, {theme: 'colored'})
@@ -99,8 +100,8 @@ export default function Cart() {
             </div>
             {cartList.map(product => {
               return (
-                <div className="max-w-2xl w-full mt-4" key={product.product.id}>
-                  <div className="flex items-center justify-between border border-gray-300 rounded-lg p-3">
+                <div className="w-4xl mt-4 relative" key={product.product.id}>
+                  <div className="flex items-center justify-between border border-gray-300 rounded-lg py-3">
                     <div className="w-24 h-20flex items-center mx-5 my-4">
                       <Image src={product.product.image[0]} width={96} height={86} alt={product.product.name} />
                     </div>
@@ -112,13 +113,13 @@ export default function Cart() {
                         Standard Shipping
                       </p>
                     </div>
-                    <div className="flex items-center mx-5 border border-gray-300 rounded-2xl px-2 py-1">
-                      <button className="text-gray-400" onClick={() => removeFromCart(product.id)}><Minus size={16} /></button>
-                      <p className="mx-4">{product.amount}</p>
-                      <button className="text-gray-400" onClick={() => addToCart(product.id, product.product)}><Plus size={16} /></button>
+                    <div className="flex items-center justify-around mx-5 border border-gray-300 rounded-2xl w-24 max-w-24 py-1">
+                      <button className="text-gray-400 ml-2" onClick={() => removeFromCart(product.id)}><Minus size={16} /></button>
+                      <p className="w-2/3 flex items-center justify-center">{product.amount}</p>
+                      <button className="text-gray-400 mr-2" onClick={() => addToCart(product.id, product.product)}><Plus size={16} /></button>
                     </div>
-                    <h3 className="font-semibold text-lg ">${product.amount * Number(product.product.price)}</h3>
-                    <button onClick={() => removeAllFromCart(product.id)} className="ml-4 mr-2 rounded-full bg-gray-300 p-1">
+                    <h3 className="font-semibold text-lg mr-4">${product.amount * Number(product.product.price)}</h3>
+                    <button onClick={() => removeAllFromCart(product.id)} className="absolute top-2 right-2 rounded-full p-1">
                         <X size={16} />
                     </button>
                   </div>

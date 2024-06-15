@@ -64,8 +64,8 @@ export function UserProvider({children}: UserProviderProps) {
         const chain = Number((await provider.getNetwork()).chainId);
 
         const contract: any = await connectContract()
-
-        const balance = contract.connect(signer).seeBalance()
+       
+        const balance = await contract.connect(signer).seeBalance()
 
         const userData = {
           ...res.data.user, 
@@ -81,6 +81,7 @@ export function UserProvider({children}: UserProviderProps) {
         localStorage.setItem('user', JSON.stringify(userData))
       }
     } catch (error) {
+      console.log(error)
       if(error instanceof AxiosError) {
         toast.error(error?.response?.data, {theme: 'colored'})
       }

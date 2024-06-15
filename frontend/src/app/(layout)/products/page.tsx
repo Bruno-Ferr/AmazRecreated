@@ -1,9 +1,10 @@
 'use client';
 import { ShopCartContext } from "@/context/cartContext";
 import { ArrowRight, CaretDown, Star, StarHalf } from "@phosphor-icons/react";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const itemList = [{
   id: 1,
@@ -88,8 +89,7 @@ const itemList = [{
 }]
 
 export default function Products() {
-  const { addToCart, removeFromCart } = useContext(ShopCartContext)
-
+  const [products, setProducts] = useState()
   const handleClickInterno = (event: any) => {
     event.stopPropagation(); // Impede a propagação do evento de clique
     console.log("interno");
@@ -102,17 +102,26 @@ export default function Products() {
     // Insira aqui o que deseja fazer ao clicar no botão interno
   };
 
+  const fetchProducts = async () => {
+    const res = await axios.get(`${process.env.API_ADDRESS}/products`)
+    console.log(res.data)
+    setProducts(res.data)
+  }
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">
         <h5 className="text-sm font-bold text-[#9B9A9A]">Popular Products</h5>
         <ArrowRight size={14} weight="bold" className="mx-2" />
-        <h5 className="text-sm font-bold text-[#221F1F]">Sneakers</h5>
+        <h5 className="text-sm font-bold text-[#221F1F]">General</h5>
       </div>
       <div className="flex flex-col">
         <div className="flex items-center justify-between">
           <div className="flex gap-3">
-            <h2 className="text-4xl font-medium text-[#221F1F]">Sneakers</h2>
+            <h2 className="text-4xl font-medium text-[#221F1F]">General</h2>
             <h4 className="text-lg font-medium text-[#9B9A9A]">157 results</h4>
           </div>
           <div>
@@ -122,15 +131,15 @@ export default function Products() {
           </div>
         </div>
         <div className="mt-16 grid grid-cols-4 gap-x-8 gap-y-8"> {/* Grid */}
-          {itemList.map(item => {
+          {products?.map(item => {
             return (
-              <div className="flex" key={item.url}>
+              <div className="flex" key={item._id}>
                 <div className="flex flex-col text-start">
                   <Link href={`./products/${item.id}`} className="h-48 w-60 flex items-center justify-center rounded-xl shadow-[10px_10px_25px_5px_rgba(0,0,0,0.1)]">
                     <Image
-                      src={item.url}
-                      width={200}
-                      height={200}
+                      src={item.image[0]}
+                      width={180}
+                      height={180}
                       alt={item.name}
                     />
                   </Link>
@@ -144,7 +153,7 @@ export default function Products() {
                               <StarHalf size={14} weight="fill" color="#FBB833" key={index} /> : <Star size={14} color="#ABABAB" key={index} />
                       })}
                       <CaretDown size={12} />
-                      <p className="text-sm text-[#9B9A9A] ml-2">{item.reviews}</p>
+                      <p className="text-sm text-[#9B9A9A] ml-2">{item.reviews.length}</p>
                     </button>
                     <p className="text-2xl font-semibold text-[#221F1F]">R${item.price} <span className="text-sm line-through text-[#ABABAB] decoration-gray-700 decoration-3">R${item.discount}</span></p>
                     {/* {item.frete && <p className="text-[14px] leading-1">

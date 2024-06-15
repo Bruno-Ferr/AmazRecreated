@@ -102,11 +102,11 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
             )}
             <button className="text-white font-medium bg-orange-400 rounded-md py-2 w-full mt-8" onClick={() => createUser()}>Save</button>
           </div>
-        ) : true ? ( 
+        ) : !!user?.name ? ( 
           <div className="font-medium flex flex-col justify-between h-full">
             <div>
               <div className="flex justify-center">
-                <h2 className="text-lg">{user?.name}John Doe</h2>  
+                <h2 className="text-lg">{user?.name}</h2>  
               </div>
               <button className="flex flex-row justify-between mt-2 w-full">
                 <p>Wallet:</p>  
