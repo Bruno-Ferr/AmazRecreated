@@ -58,18 +58,22 @@ export default function Cart() {
 
       bookingId = res.data.bookId
       if(res.status != 200) return toast.error('Something went wrong') 
-      const contract: any = await connectContract();
+      const contract = await connectContract();
 
       const totalInEther = (res.data.totalPrice * 0.00027).toString()
-      const amzEarned = !withAmz ? Math.floor(res.data.totalPrice / 20) : 0
+      const amzEarned = withAmz ? res.data.totalPrice : Math.floor(res.data.totalPrice / 20) 
 
-      await contract.connect(user.signer).pay(withAmz, amzEarned, parseEther(totalInEther), {value: withAmz ? parseEther(totalInEther) : 0}) 
+      console.log(amzEarned)
 
-      // const balance = await contract.connect(user.signer).seeBalance()
-      // setUser((prev: any) => ({
-      //   ...prev, 
-      //   balance: ethers.formatEther(balance)
-      // }))
+      const tx = await contract.connect(user.signer).pay(withAmz, amzEarned, parseEther(totalInEther), {value: withAmz ? 0 : parseEther(totalInEther)}) 
+
+      await tx.wait()
+      const balance = await contract.connect(user.signer).seeBalance()
+
+      setUser((prev: any) => ({
+        ...prev, 
+        balance: ethers.formatEther(balance)
+      }))
       
       toast.success('Purchase concluded')
     } catch (err) {

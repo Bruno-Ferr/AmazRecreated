@@ -67,6 +67,8 @@ export function UserProvider({children}: UserProviderProps) {
        
         const balance = await contract.connect(signer).seeBalance()
 
+        console.log(provider)
+        console.log(signer)
         const userData = {
           ...res.data.user, 
           wallet: accounts[0],
