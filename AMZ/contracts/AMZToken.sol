@@ -14,17 +14,17 @@ contract AMZToken {
    //Precisa do endereço dono do contrato
    address owner;
 
-   uint256 private _totalSupply;
+   uint256 public _totalSupply;
 
-    string private _name;
-    string private _symbol;
+    string public name;
+    string public symbol;
     uint decimals = 18;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     //100 * 10 ** ERC20.decimals()
     constructor(string memory name_, string memory symbol_, uint initialValue) {
-        _name = name_;
-        _symbol = symbol_;
+        name = name_;
+        symbol = symbol_;
         owner = payable(msg.sender);
         _mint(msg.sender, initialValue * 10 ** decimals);
     }
@@ -102,12 +102,12 @@ contract AMZToken {
         return wallets[msg.sender];
     }
 
-    function pay(bool isAmz, uint tokenAmount, uint _value) public payable {//_value já em wei (conversão no js)
+    function pay(bool isAmz, uint tokenAmount) external payable {
         if(isAmz) {
-            require(wallets[msg.sender] >= _value, "You don't have enough amz"); //Check the amount of loyalty points in the wallet
+            require(wallets[msg.sender] >= msg.value, "You don't have enough amz"); //Check the amount of loyalty points in the wallet
             wasteAMZ(tokenAmount); //Lose loyalty points
         } else {
-            require(msg.value >= _value, "You don't have enough ether"); //checar se o valor pago é maior ou igual ao valor da compra
+            require(msg.value >= msg.value, "You don't have enough ether"); //checar se o valor pago é maior ou igual ao valor da compra
             earnAMZ(tokenAmount);
         }
     }

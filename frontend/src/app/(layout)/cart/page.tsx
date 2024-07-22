@@ -58,14 +58,14 @@ export default function Cart() {
 
       bookingId = res.data.bookId
       if(res.status != 200) return toast.error('Something went wrong') 
-      const contract = await connectContract();
+      const contract: any = await connectContract();
 
       const totalInEther = (res.data.totalPrice * 0.00027).toString()
-      const amzEarned = withAmz ? res.data.totalPrice : Math.floor(res.data.totalPrice / 20) 
+      const amzEarned = Math.floor(res.data.totalPrice / 20) 
 
-      console.log(amzEarned)
-
-      const tx = await contract.connect(user.signer).pay(withAmz, amzEarned, parseEther(totalInEther), {value: withAmz ? 0 : parseEther(totalInEther)}) 
+      const valueToSend = withAmz ? 0 : parseEther(totalInEther)
+      console.log('before TX')
+      const tx = await contract.connect(user.signer).pay(withAmz, amzEarned, {value: valueToSend}) 
 
       await tx.wait()
       const balance = await contract.connect(user.signer).seeBalance()
@@ -76,6 +76,7 @@ export default function Cart() {
       }))
       
       toast.success('Purchase concluded')
+      router.push('./congrats')
     } catch (err) {
       console.log(err)
       //Se der erro, reverter backend de agendamento
@@ -165,7 +166,7 @@ export default function Cart() {
                   <p className="ml-1">$AMZ</p>
 
                   </div>
-                  <p className="ml-2">+ ${(totalPrice / 50).toFixed(2)}</p>
+                  <p className="ml-2">+ ${(Math.floor(totalPrice / 20))}</p>
                 </div>
                 {loading ? (
                   <div className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">

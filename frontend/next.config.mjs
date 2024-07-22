@@ -2,7 +2,7 @@
 const nextConfig = {
   env: {
     API_ADDRESS:"http://localhost:3333",
-    CONTRACT_ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    CONTRACT_ADDRESS: "0x46E7396bbE8cb28BeeBb8835c5d4475F2d7b108E"
   }
 };
 

@@ -1,11 +1,13 @@
 import hre from "hardhat";
 
-const AMZAmount = 100000000_000_000_000_000_000_000n;
+const tokenName = 'Amaz';
+const tokenSymbol = 'AMZ';
+const AMZAmount = 100000000;
 
 async function deploy() {
   const [owner] = await hre.ethers.getSigners();
   const MyToken = await hre.ethers.getContractFactory("AMZToken");
-  const token = await MyToken.deploy("AMAZ", "AMZ", AMZAmount);
+  const token = await MyToken.deploy(tokenName, tokenSymbol, AMZAmount);
   const tokenAddr = await token.getAddress()
 
   console.log(

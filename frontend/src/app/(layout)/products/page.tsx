@@ -111,6 +111,35 @@ export default function Products() {
     fetchProducts()
   }, [])
 
+  const calculateAverageRating = (reviews: any) => {
+    if (reviews.length === 0) return 0;
+
+    const totalStars = reviews.reduce((acc, review) => {
+      return acc + review.stars;
+    }, 0);
+
+    return totalStars / reviews.length;
+  };
+
+  const renderStars = (rating) => {
+    const stars = [];
+    const roundedStars = Math.round(rating * 2) / 2
+    const fullStars = Math.floor(roundedStars);
+    const halfStar = roundedStars - fullStars == 0.5;
+
+    for (let i = 1; i <= 5; i++) {
+      if (i <= fullStars) {
+        stars.push(<Star size={14} weight="fill" color="gold" key={i} />);
+      } else if (halfStar) {
+        stars.push(<StarHalf key={i} weight="fill" size={14} color="gold"/>);
+      } else {
+        stars.push(<Star key={i} size={14} color="#ABABAB" />);
+      }
+    }
+
+    return stars;
+  };
+
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">
@@ -147,15 +176,17 @@ export default function Products() {
                     <h2 className="font-bold text-[#221F1F]">{item.name}</h2>
                     <p className="text-sm font-medium text-[#ABABAB]">{item.brand}</p>
                     <button className="flex items-center  my-3" onClick={(e) => handleClickInterno(e)}>
-                    {[...new Array(5)].map((_, index) => {
-                        return index < Math.floor(item.stars) ? <Star size={14} weight="fill" color="#FBB833" key={index} /> :
-                              index == Math.floor(item.stars) && item.stars - Math.floor(item.stars) == 0.5 ? 
-                              <StarHalf size={14} weight="fill" color="#FBB833" key={index} /> : <Star size={14} color="#ABABAB" key={index} />
-                      })}
+                      {renderStars(calculateAverageRating(item.reviews))}
                       <CaretDown size={12} />
                       <p className="text-sm text-[#9B9A9A] ml-2">{item.reviews.length}</p>
                     </button>
-                    <p className="text-2xl font-semibold text-[#221F1F]">R${item.price} <span className="text-sm line-through text-[#ABABAB] decoration-gray-700 decoration-3">R${item.discount}</span></p>
+                    {
+                      item.amount > 0 ? (
+                        <p className="text-2xl font-semibold text-[#221F1F]">R${item.price} <span className="text-sm line-through text-[#ABABAB] decoration-gray-700 decoration-3">R${item.discount}</span></p>
+                      ) : (
+                        <p className="text-2xl font-semibold text-[#817e7e]">Out of stock</p>
+                      )
+                    }
                     {/* {item.frete && <p className="text-[14px] leading-1">
                       Receba até <span className="font-bold">Amanhã, 10 de abr. </span>
                       Frete GRÁTIS em pedidos acima de R$ 129,00 enviados pela Amazon</p>
