@@ -88,8 +88,27 @@ const itemList = [{
   discount: "1399",
 }]
 
+type ProductsProps = [{
+  _id: string,
+  id: number,
+  name: string,
+  brand: string,
+  price: number,
+  reviews: ReviewsProps
+  image: string[],
+  stars: number,
+  shippingFree: boolean,
+  discount: string,
+  amount: number,
+}]
+
+type ReviewsProps = {
+  comment: string,
+  stars: number
+}[]
+
 export default function Products() {
-  const [products, setProducts] = useState()
+  const [products, setProducts] = useState<ProductsProps>()
   const handleClickInterno = (event: any) => {
     event.stopPropagation(); // Impede a propagação do evento de clique
     console.log("interno");
@@ -111,17 +130,17 @@ export default function Products() {
     fetchProducts()
   }, [])
 
-  const calculateAverageRating = (reviews: any) => {
+  const calculateAverageRating = (reviews: ReviewsProps) => {
     if (reviews.length === 0) return 0;
 
-    const totalStars = reviews.reduce((acc, review) => {
+    const totalStars = reviews.reduce((acc: any, review: ReviewsProps[0]) => {
       return acc + review.stars;
     }, 0);
 
     return totalStars / reviews.length;
   };
 
-  const renderStars = (rating) => {
+  const renderStars = (rating: any) => {
     const stars = [];
     const roundedStars = Math.round(rating * 2) / 2
     const fullStars = Math.floor(roundedStars);
