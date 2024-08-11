@@ -1,29 +1,18 @@
 'use client'
+import ColorSelector from "@/components/Product/Selectors/colorSelector";
+import TypeSelector from "@/components/Product/Selectors/typeSelector";
 import { ShopCartContext } from "@/context/cartContext";
+import { BookAttributes, CoffeeAttributes, EarringAttributes, ProductsProps, ShoeAttributes } from "@/types/products";
 import { ArrowCircleDown, ArrowCircleUp, ArrowRight, ArrowsClockwise, CaretDown, ChatCircleDots, Clock, Heart, Question, ShoppingCart, Star, StarHalf, Truck } from "@phosphor-icons/react";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 
-type ProductProps = {
-  amount: Number
-  brand: string
-  discount: Number
-  id: string
-  image: string[]
-  name: string
-  price: number
-  reviews: [{
-    comment: string
-    stars: number
-  }]
-  shippingFree: boolean
-}
 
 export default function Product({ params }: { params: { productId: string } }) {
   const { addToCart } = useContext(ShopCartContext)
-  const [product, setProduct] = useState<ProductProps>({} as ProductProps)
+  const [product, setProduct] = useState<ProductsProps[0]>({} as ProductsProps[0])
   const [average, setAverage] = useState<number>(0)
   
   useEffect(() => {
@@ -35,15 +24,66 @@ export default function Product({ params }: { params: { productId: string } }) {
       const roundedAverage = Math.round(averageStars * 2) / 2;
       setAverage(roundedAverage)
       setProduct(res.data)
+      console.log(res.data)
     })
-  }, [])
+  }, []) //Tirar useEffect
+
+  function getAmountsAndPrices(product: ProductsProps[0]) {
+    // Define an object to hold the amounts and prices
+    let listOfAmountAndPrice: { amount: number; price: string } = { amount: 0, price: '0'};
+  
+    // Check the category and extract the appropriate values
+    switch (product.category) {
+      case 'coffee': {
+        const coffeeAttributes = product.attributes[0] as CoffeeAttributes;
+        if (coffeeAttributes.sizes.length > 0) {
+          listOfAmountAndPrice = {
+            amount: coffeeAttributes.sizes[0].amount,
+            price: coffeeAttributes.sizes[0].price
+          };
+        }
+        break;
+      }
+      case 'shoe': {
+        const shoeAttributes = product.attributes[0] as ShoeAttributes;
+        if (shoeAttributes.sizes.length > 0) {
+          listOfAmountAndPrice = {
+            amount: shoeAttributes.sizes[0].amount,
+            price: shoeAttributes.price
+          };
+        }
+        break;
+      }
+      case 'book': {
+        const bookAttributes = product.attributes[0] as BookAttributes;
+        listOfAmountAndPrice = {
+          amount: bookAttributes.amount,
+          price: bookAttributes.price
+        }
+        break;
+      }
+      case 'earring': {
+        const earringAttributes = product.attributes[0] as EarringAttributes;
+        listOfAmountAndPrice = {
+          amount: earringAttributes.amount,
+          price: earringAttributes.price
+        };
+        break;
+      }
+      default:
+        // Handle unknown categories or types if necessary
+        break;
+    }
+  
+    return listOfAmountAndPrice;
+  }
   
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">
         <h5 className="text-sm font-bold text-[#9B9A9A]">Popular Products</h5>
         <ArrowRight size={14} weight="bold" className="mx-2" />
-        <h5 className="text-sm font-bold text-[#221F1F]">Sneakers</h5>
+        <h5 className="text-sm font-bold text-[#221F1F]">{product.category}</h5>
       </div>
       <div className="flex gap-4">
         <div>
@@ -87,37 +127,26 @@ export default function Product({ params }: { params: { productId: string } }) {
             </div>
           </div>
           <div className="my-6 flex justify-between">
-            <p className="text-3xl font-semibold">${product?.price}</p>
+            <p className="text-3xl font-semibold">${}</p>
             <p className="text-sm flex items-center text-blue-500 font-medium">
               <Truck size={18} className="mr-2" />
               Standard Shipping
             </p>
           </div>
-          <div className="my-4">
-            <p className="font-medium">Colors available: <span className="font-light">white</span></p>
-             
-            <div className="flex gap-1">
-              <button className="w-6 h-6 rounded-full bg-blue-700 border border-gray-300" />
-              <button className="w-6 h-6 rounded-full bg-red-700 border border-gray-3" />
-              <button className="w-6 h-6 rounded-full bg-green-700 border border-gray-3" />
-              <button className="w-6 h-6 rounded-full bg-pink-700 border border-gray-3" />
-              <button className="w-6 h-6 rounded-full bg-gray-200 border border-white" />
-            </div>
-          </div>
-          <div className="my-4">
-            <p className="font-medium">Size: <span className="font-light">41</span></p>
-             
-            <div className="flex gap-1">
-              <button className="w-14 h-10 rounded-md border border-gray-300">38</button>
-              <button className="w-14 h-10 rounded-md border border-gray-3">39</button>
-              <button className="w-14 h-10 rounded-md border border-gray-3">40</button>
-              <button className="w-14 h-10 rounded-md border border-gray-3 bg-gray-200">41</button>
-              <button className="w-14 h-10 rounded-md border border-gray-3">42</button>
-            </div>
-          </div>
+          {
+            product.category == 'shoe' && (
+              <>
+                <ColorSelector options={product.attributes} />
+                <TypeSelector options={product.attributes[0].sizes} />
+              </>
+            )
+          }
+          {
+            product.category == 'coffee'
+          }
           <div className="flex gap-3">
             <button className="flex w-20 bg-gray-200 items-center justify-center py-3 rounded-xl text-gray-500 hover:bg-red-600 hover:text-white ease-in"><Heart size={24} /></button>
-            <button className="flex w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white" onClick={() => addToCart(Number(product.id), product, true)}><ShoppingCart size={24} /> Add to cart</button>
+            <button className="flex w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white" onClick={() => addToCart(Number(product._id), product, true)}><ShoppingCart size={24} /> Add to cart</button>
           </div>
           <div className="my-4">
             <div className="flex my-1">

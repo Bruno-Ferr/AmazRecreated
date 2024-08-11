@@ -105,7 +105,7 @@ export default function Cart() {
             </div>
             {cartList.map(product => {
               return (
-                <div className="w-4xl mt-4 relative" key={product.product.id}>
+                <div className="w-4xl mt-4 relative" key={product.product._id}>
                   <div className="flex items-center justify-between border border-gray-300 rounded-lg py-3">
                     <div className="w-24 h-20flex items-center mx-5 my-4">
                       <Image src={product.product.image[0]} width={96} height={86} alt={product.product.name} />

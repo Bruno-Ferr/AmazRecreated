@@ -1,4 +1,5 @@
 'use client'
+import { ProductsProps } from "@/types/products";
 import { ReactNode, createContext, useState } from "react";
 
 interface shopCartProviderProps {
@@ -9,7 +10,7 @@ interface shopCartContextProps {
   cartList: productInCart[]
   cartNotifications: number
   setCartNotifications: (a: any) => void
-  addToCart: (id: number, product: ProductTypes, updateNotifies?: boolean) => void
+  addToCart: (id: number, product: ProductsProps[0], updateNotifies?: boolean) => void
   removeFromCart: (id: number, updateNotifies?: boolean) => void
   removeAllFromCart: (id: number) => void
   cleanCart: () => void
@@ -18,22 +19,7 @@ interface shopCartContextProps {
 type productInCart = {
   id: number
   amount: number
-  product: ProductTypes
-}
-
-type ProductTypes = {
-  amount: Number
-  brand: string
-  discount: Number
-  id: string
-  image: string[]
-  name: string
-  price: number
-  reviews: [{
-    comment: string
-    stars: number
-  }]
-  shippingFree: boolean
+  product: ProductsProps[0]
 }
 
 export const ShopCartContext = createContext({} as shopCartContextProps)
@@ -42,7 +28,7 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
   const [cartList, setCartList] = useState<productInCart[]>([]);
   const [cartNotifications, setCartNotifications] = useState(0)
 
-  function addToCart(id: number, product: ProductTypes, updateNotifies?: boolean) {
+  function addToCart(id: number, product: ProductsProps[0], updateNotifies?: boolean) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       setCartList(prev => {

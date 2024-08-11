@@ -1,106 +1,11 @@
 'use client';
 import { ShopCartContext } from "@/context/cartContext";
+import { BookAttributes, CoffeeAttributes, EarringAttributes, ProductsProps, ShoeAttributes } from "@/types/products";
 import { ArrowRight, CaretDown, Star, StarHalf } from "@phosphor-icons/react";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
-
-const itemList = [{
-  id: 1,
-  url: "/Court_Vision.png",
-  name: "Court Vision",
-  brand: "Nike",
-  stars: 5,
-  reviews: 57,
-  frete: true,
-  price: 799,
-  discount: "1099",
-}, {
-  id: 2,
-  url: "/Nike_Air_Max.png",
-  name: "Nike Air Max",
-  brand: "Nike",
-  stars: 4.5,
-  reviews: 130,
-  frete: false,
-  price: 899,
-  discount: "1399",
-}, {
-  id: 3,
-  url: "/Adidas_Vs_Pace.png",
-  name: "Adidas Vs Pace",
-  brand: "Adidas",
-  stars: 5,
-  reviews: 23,
-  frete: true,
-  price: 599,
-  discount: "899",
-}, {
-  id: 4,
-  url: "/Adidas_Runfalcon.png",
-  name: "Adidas Runfalcon",
-  brand: "Adidas",
-  stars: 3,
-  reviews: 57,
-  frete: false,
-  price: 999,
-  discount: "1399",
-}, {
-  id: 5,
-  url: "/Nike_Air_Mx.png",
-  name: "Nike Air Max",
-  brand: "Nike",
-  stars: 4.5,
-  reviews: 130,
-  frete: false,
-  price: 899,
-  discount: "1399",
-}, {
-  id: 6,
-  url: "/Adidas_Vs_Pac.png",
-  name: "Adidas Vs Pace",
-  brand: "Adidas",
-  stars: 5,
-  reviews: 23,
-  frete: true,
-  price: 599,
-  discount: "899",
-}, {
-  id: 7,
-  url: "/Adidas_Runfalc.png",
-  name: "Adidas Runfalcon",
-  brand: "Adidas",
-  stars: 3,
-  reviews: 57,
-  frete: false,
-  price: 999,
-  discount: "1399",
-}, {
-  id: 8,
-  url: "/Adidas_Runfalco.png",
-  name: "Adidas Runfalcon",
-  brand: "Adidas",
-  stars: 3,
-  reviews: 57,
-  frete: false,
-  price: 999,
-  discount: "1399",
-}]
-
-type ProductsProps = [{
-  _id: string,
-  id: number,
-  name: string,
-  brand: string,
-  price: number,
-  reviews: ReviewsProps
-  image: string[],
-  stars: number,
-  shippingFree: boolean,
-  discount: string,
-  amount: number,
-}]
 
 type ReviewsProps = {
   comment: string,
@@ -159,6 +64,56 @@ export default function Products() {
     return stars;
   };
 
+  function getAmountsAndPrices(product: ProductsProps[0]) {
+    // Define an object to hold the amounts and prices
+    let listOfAmountAndPrice: { amount: number; price: string } = { amount: 0, price: '0'};
+  
+    // Check the category and extract the appropriate values
+    switch (product.category) {
+      case 'coffee': {
+        const coffeeAttributes = product.attributes[0] as CoffeeAttributes;
+        if (coffeeAttributes.sizes.length > 0) {
+          listOfAmountAndPrice = {
+            amount: coffeeAttributes.sizes[0].amount,
+            price: coffeeAttributes.sizes[0].price
+          };
+        }
+        break;
+      }
+      case 'shoe': {
+        const shoeAttributes = product.attributes[0] as ShoeAttributes;
+        if (shoeAttributes.sizes.length > 0) {
+          listOfAmountAndPrice = {
+            amount: shoeAttributes.sizes[0].amount,
+            price: shoeAttributes.price
+          };
+        }
+        break;
+      }
+      case 'book': {
+        const bookAttributes = product.attributes[0] as BookAttributes;
+        listOfAmountAndPrice = {
+          amount: bookAttributes.amount,
+          price: bookAttributes.price
+        }
+        break;
+      }
+      case 'earring': {
+        const earringAttributes = product.attributes[0] as EarringAttributes;
+        listOfAmountAndPrice = {
+          amount: earringAttributes.amount,
+          price: earringAttributes.price
+        };
+        break;
+      }
+      default:
+        // Handle unknown categories or types if necessary
+        break;
+    }
+  
+    return listOfAmountAndPrice;
+  }
+
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">
@@ -170,7 +125,7 @@ export default function Products() {
         <div className="flex items-center justify-between">
           <div className="flex gap-3">
             <h2 className="text-4xl font-medium text-[#221F1F]">General</h2>
-            <h4 className="text-lg font-medium text-[#9B9A9A]">157 results</h4>
+            <h4 className="text-lg font-medium text-[#9B9A9A]">{products?.length} results</h4>
           </div>
           <div>
             <button className="text-sm w-36 h-14 font-bold bg-[#FFE1B3] rounded-3xl">Express shipping</button>
@@ -180,10 +135,11 @@ export default function Products() {
         </div>
         <div className="mt-16 grid grid-cols-4 gap-x-8 gap-y-8"> {/* Grid */}
           {products?.map(item => {
+            const amountAndPrice = getAmountsAndPrices(item)
             return (
               <div className="flex" key={item._id}>
                 <div className="flex flex-col text-start">
-                  <Link href={`./products/${item.id}`} className="h-48 w-60 flex items-center justify-center rounded-xl shadow-[10px_10px_25px_5px_rgba(0,0,0,0.1)]">
+                  <Link href={`./products/${item._id}`} className="h-48 w-60 flex items-center justify-center rounded-xl shadow-[10px_10px_25px_5px_rgba(0,0,0,0.1)]">
                     <Image
                       src={item.image[0]}
                       width={180}
@@ -200,8 +156,8 @@ export default function Products() {
                       <p className="text-sm text-[#9B9A9A] ml-2">{item.reviews.length}</p>
                     </button>
                     {
-                      item.amount > 0 ? (
-                        <p className="text-2xl font-semibold text-[#221F1F]">R${item.price} <span className="text-sm line-through text-[#ABABAB] decoration-gray-700 decoration-3">R${item.discount}</span></p>
+                      amountAndPrice.amount > 0 ? (
+                        <p className="text-2xl font-semibold text-[#221F1F]">R${amountAndPrice.price}{!item.discount && <span className="text-sm line-through text-[#ABABAB] decoration-gray-700 decoration-3">R${item.discount}</span>}</p>
                       ) : (
                         <p className="text-2xl font-semibold text-[#817e7e]">Out of stock</p>
                       )
