@@ -5,7 +5,10 @@ import cors from 'cors';
 import { addProduct, findProduct, getProducts } from "./controller/products";
 import { addClient, getClient, getClientBalance, getClientLastPurchase } from "./controller/client";
 import mongoose, { Schema } from "mongoose";
+import { ethers } from "ethers";
+import contractABI from '../AMZToken/AMZToken.json'
 
+const provider = new ethers.AlchemyProvider('sepolia', 's-vHBaDfU14XzTTkHoaYdhsGp3wKZtKT');
 // configures dotenv to work in your application
 dotenv.config();
 mongoose.connect(process.env.MONGO_CONNECTION!)
@@ -28,7 +31,12 @@ app.get("/products", getProducts);
 app.get("/products/find/:product_id", findProduct); 
 app.get("/client/:id", getClient); 
 app.get("/clientLastPurchase/:id", getClientLastPurchase); 
-app.get("/clientBalance/:user_addr", getClientBalance); 
+app.get("/clientBalance/:user_addr", getClientBalance);
+
+const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS!, contractABI, provider);
+contract.on('Transfer', (prop) => {
+  console.log(`Event received: ${prop}`);
+});
 
 app.post("/addProduct", addProduct); 
 app.post("/addUser", addClient); 

@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { UserContext, connectContract } from "@/context/userContext"
 import { Contract } from "ethers"
 import ABI from '../../../contract/abis/amz.json'
+import { CoffeeAttributes, ProductsProps, ShoeAttributes } from "@/types/products"
 
 interface ProviderRpcError extends Error {
   message: string;
@@ -24,7 +25,7 @@ export default function Cart() {
   const {user, setUser} = useContext(UserContext)
   const [loading, setLoading] = useState(false)
   const totalPrice = cartList.reduce((total, item) => {
-    return total + (item.amount * Number(item.product.price))
+    return total + (item.amount * Number(getPrices(item.product)))
   }, 0)
   const router = useRouter()
 
@@ -64,7 +65,7 @@ export default function Cart() {
       const amzEarned = Math.floor(res.data.totalPrice / 20) 
 
       const valueToSend = withAmz ? 0 : parseEther(totalInEther)
-      console.log('before TX')
+  
       const tx = await contract.connect(user.signer).pay(withAmz, amzEarned, {value: valueToSend}) 
 
       await tx.wait()
@@ -89,6 +90,25 @@ export default function Cart() {
   useEffect(() => {
     setCartNotifications(0)
   }, [])
+
+  function getPrices(product: ProductsProps[0]) {  
+    // Check the category and extract the appropriate values
+    switch (product.category) {
+      case 'coffee': {
+        const coffeeAttributes = product.attributes[0] as CoffeeAttributes;
+        return coffeeAttributes.sizes[0].price
+      }
+      case 'shoe': {
+        const shoeAttributes = product.attributes[0] as ShoeAttributes;
+        return shoeAttributes.price
+      }
+
+      default:
+        break;
+    }
+  
+    return 0;
+  }
 
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
@@ -123,7 +143,7 @@ export default function Cart() {
                       <p className="w-2/3 flex items-center justify-center">{product.amount}</p>
                       <button className="text-gray-400 mr-2" onClick={() => addToCart(product.id, product.product)}><Plus size={16} /></button>
                     </div>
-                    <h3 className="font-semibold text-lg mr-4">${product.amount * Number(product.product.price)}</h3>
+                    <h3 className="font-semibold text-lg mr-4">${product.amount * Number(getPrices(product.product))}</h3>
                     <button onClick={() => removeAllFromCart(product.id)} className="absolute top-2 right-2 rounded-full p-1">
                         <X size={16} />
                     </button>
@@ -143,7 +163,7 @@ export default function Cart() {
                 </div>
                 <div className="flex justify-between mt-4">
                   <h4>savings</h4>
-                  <h4>-$0.00</h4>
+                  <h4>$0.00</h4>
                 </div>
                 <div className="flex justify-between mt-4">
                   <h4>Standard shipping</h4>
@@ -169,21 +189,21 @@ export default function Cart() {
                   <p className="ml-2">+ ${(Math.floor(totalPrice / 20))}</p>
                 </div>
                 {loading ? (
-                  <div className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">
+                  <div className="bg-[#FF9900] w-full rounded-md p-2 mt-7 text-black font-semibold text-lg text-center">
                     Loading...
                   </div>
                 ) : (
                   <div>
-                    <button onClick={() => purchaseEth(false)} className="bg-[#FF9900] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Buy with Ether</button>
-                    <p>Or</p>
-                    <button onClick={() => purchaseEth(true)} className="bg-[#5900ff] w-full rounded-full p-4 mt-7 text-white font-semibold text-lg">Buy with Amz points</button>
+                    <button onClick={() => purchaseEth(false)} className="bg-[#FF9900] w-full rounded-md p-2 mt-7 font-normal text-lg text-black">Buy with <span className="font-semibold">Ether</span></button>
+                    <div className="flex gap-3 items-center justify-between my-2">
+                      <div className="w-1/3 bg-gray-500 h-[1px]" />
+                      <p className="text-gray-500 text-sm font-semibold">OR</p>
+                      <div className="w-1/3 bg-gray-500 h-[1px]" />
+                    </div>
+                    <button onClick={() => purchaseEth(true)} className="bg-[#5900ff] w-full rounded-md p-2 text-white font-normal text-lg">Buy with <span className="font-semibold">Amz points</span></button>
                   </div>
                 ) }
               </div>
-            </div>
-            <div className="flex w-full border bg-gray-200 rounded-lg h-11 mt-4">
-              <input type="text" className="w-4/5 bg-gray-200 rounded-l-lg p-3" placeholder="Discount code here"/>
-              <button className="bg-[#FF9900] w-1/5 rounded-lg text-white font-semibold">Apply</button>
             </div>
           </div>
         </div>

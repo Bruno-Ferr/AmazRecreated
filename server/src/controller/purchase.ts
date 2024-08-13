@@ -26,16 +26,33 @@ export async function purchaseController(req: Request, res: Response) {
       if (!foundProduct) {
         return res.status(404).json({ message: 'Product not found' });
       }
-      if(item.amount > foundProduct.amount!) {
-        return res.status(404).json({ message: "Product doesn't have enough amount" });
+      
+      let prodPrice
+      if(foundProduct.category == 'shoe') {
+        if(item.amount > foundProduct.attributes[0].sizes[0].amount) {
+          return res.status(404).json({ message: "Product doesn't have enough amount" });
+        }
+
+        await Product.findOneAndUpdate({ id: item.product.id},{ $inc: { amount: -item.amount }}); 
+        totalPrice = (item.amount * foundProduct.attributes[0].price) + totalPrice
+        prodPrice = foundProduct.attributes[0].price
       }
-      await Product.findOneAndUpdate({ id: item.product.id},{ $inc: { amount: -item.amount }}); 
-      totalPrice = (item.amount * foundProduct.price!) + totalPrice
+
+      if(foundProduct.category == 'coffee') {
+        if(item.amount > foundProduct.attributes[0].sizes[0].amount) {
+          return res.status(404).json({ message: "Product doesn't have enough amount" });
+        }
+
+        await Product.findOneAndUpdate({ id: item.product.id},{ $inc: { amount: -item.amount }}); 
+        totalPrice = (item.amount * foundProduct.attributes[0].sizes[0].price) + totalPrice
+        prodPrice = foundProduct.attributes[0].sizes[0].price
+      }
+
       return {
         id: foundProduct.id,
         name: foundProduct.name,
         brand: foundProduct.brand,
-        price: foundProduct.price,
+        price: prodPrice,
         shippingFree: foundProduct.shippingFree,
         discount: foundProduct.discount,
         amount: item.amount

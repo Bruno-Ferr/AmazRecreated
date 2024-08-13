@@ -9,11 +9,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 
-
 export default function Product({ params }: { params: { productId: string } }) {
   const { addToCart } = useContext(ShopCartContext)
   const [product, setProduct] = useState<ProductsProps[0]>({} as ProductsProps[0])
   const [average, setAverage] = useState<number>(0)
+  const [typeSelected1, setTypeSelected1] = useState("")
+  const [typeSelected2, setTypeSelected2] = useState("")
+  const [price, setPrice] = useState<any>()
   
   useEffect(() => {
     axios.get(`${process.env.API_ADDRESS}/products/find/${params.productId}`).then(res => {
@@ -24,60 +26,64 @@ export default function Product({ params }: { params: { productId: string } }) {
       const roundedAverage = Math.round(averageStars * 2) / 2;
       setAverage(roundedAverage)
       setProduct(res.data)
-      console.log(res.data)
+      switch (res.data.category) {
+        case 'coffee': {
+          const coffeeAttributes = res.data.attributes[0] as CoffeeAttributes;
+          setTypeSelected1(coffeeAttributes.milk)
+          setTypeSelected2(coffeeAttributes.sizes[0].size)
+          break;
+        }
+        case 'shoe': {
+          const shoeAttributes = res.data.attributes[0] as ShoeAttributes;
+          setTypeSelected1(shoeAttributes.color)
+          setTypeSelected2(shoeAttributes.sizes[0].size)
+          break;
+        }
+        default:
+        // Handle unknown categories or types if necessary
+        break;
+      }
     })
   }, []) //Tirar useEffect
 
-  function getAmountsAndPrices(product: ProductsProps[0]) {
-    // Define an object to hold the amounts and prices
-    let listOfAmountAndPrice: { amount: number; price: string } = { amount: 0, price: '0'};
-  
+  useEffect(() => {
+    setPrice(getAmountsAndPrices(product))
+  }, [typeSelected1, typeSelected2])
+
+  function getAmountsAndPrices(product: ProductsProps[0]) {  
     // Check the category and extract the appropriate values
     switch (product.category) {
       case 'coffee': {
-        const coffeeAttributes = product.attributes[0] as CoffeeAttributes;
-        if (coffeeAttributes.sizes.length > 0) {
-          listOfAmountAndPrice = {
-            amount: coffeeAttributes.sizes[0].amount,
-            price: coffeeAttributes.sizes[0].price
-          };
+        const coffeeAttributes = product.attributes as CoffeeAttributes[];
+        const [coffeeFilter] = coffeeAttributes.filter(value => value.milk === typeSelected1 && value.sizes.filter(v => v.size == typeSelected2))
+        if (!!coffeeFilter) {
+            return coffeeFilter.sizes[0].price
         }
         break;
       }
       case 'shoe': {
-        const shoeAttributes = product.attributes[0] as ShoeAttributes;
-        if (shoeAttributes.sizes.length > 0) {
-          listOfAmountAndPrice = {
-            amount: shoeAttributes.sizes[0].amount,
-            price: shoeAttributes.price
-          };
+        const shoeAttributes = product.attributes as ShoeAttributes[];
+        const [shoeFilter] = shoeAttributes.filter(value => value.color === typeSelected1)
+        if (!!shoeFilter) {
+          return shoeFilter.price
         }
         break;
       }
       case 'book': {
         const bookAttributes = product.attributes[0] as BookAttributes;
-        listOfAmountAndPrice = {
-          amount: bookAttributes.amount,
-          price: bookAttributes.price
-        }
-        break;
+        bookAttributes.price
       }
       case 'earring': {
         const earringAttributes = product.attributes[0] as EarringAttributes;
-        listOfAmountAndPrice = {
-          amount: earringAttributes.amount,
-          price: earringAttributes.price
-        };
-        break;
+        return earringAttributes.price
       }
       default:
-        // Handle unknown categories or types if necessary
         break;
     }
   
-    return listOfAmountAndPrice;
+    return 0;
   }
-  
+
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">
@@ -104,7 +110,7 @@ export default function Product({ params }: { params: { productId: string } }) {
         </div>
         
         <div className="h-[32rem] w-[32rem] rounded-lg bg-gray-200 flex items-center justify-center">
-          {/* <Image src={product?.image[0] || ''} width={32} height={32} alt={product.name} /> */}
+          {/* <Image src={product.image[0]} width={32} height={32} alt={product.name} /> */}
         </div>
         <div>
           <h1 className="text-4xl font-semibold">{product?.name}</h1>
@@ -127,7 +133,7 @@ export default function Product({ params }: { params: { productId: string } }) {
             </div>
           </div>
           <div className="my-6 flex justify-between">
-            <p className="text-3xl font-semibold">${}</p>
+            <p className="text-3xl font-semibold">${price}</p>
             <p className="text-sm flex items-center text-blue-500 font-medium">
               <Truck size={18} className="mr-2" />
               Standard Shipping
@@ -136,17 +142,21 @@ export default function Product({ params }: { params: { productId: string } }) {
           {
             product.category == 'shoe' && (
               <>
-                <ColorSelector options={product.attributes} />
-                <TypeSelector options={product.attributes[0].sizes} />
+                <ColorSelector options={product.attributes} selected={typeSelected1} setSelected={setTypeSelected1} />
+                <TypeSelector options={product.attributes[0].sizes} selected={typeSelected2} setSelected={setTypeSelected2} />
               </>
             )
           }
           {
-            product.category == 'coffee'
+            product.category == 'coffee' && (
+              <>
+                <TypeSelector options={product.attributes[0].sizes} selected={typeSelected1} setSelected={setTypeSelected1} />
+              </>
+            )
           }
           <div className="flex gap-3">
             <button className="flex w-20 bg-gray-200 items-center justify-center py-3 rounded-xl text-gray-500 hover:bg-red-600 hover:text-white ease-in"><Heart size={24} /></button>
-            <button className="flex w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white" onClick={() => addToCart(Number(product._id), product, true)}><ShoppingCart size={24} /> Add to cart</button>
+            <button className="flex w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white" onClick={() => addToCart(product._id, product, true)}><ShoppingCart size={24} /> Add to cart</button>
           </div>
           <div className="my-4">
             <div className="flex my-1">

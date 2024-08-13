@@ -1,7 +1,6 @@
 import { useState } from "react"
 
-export default function ColorSelector({options}: any) {
-  const [selected, setSelected] = useState("black")
+export default function ColorSelector({options, selected, setSelected}: any) {
   
   return (
     <div className="my-4">
@@ -14,7 +13,7 @@ export default function ColorSelector({options}: any) {
               <button className={`w-6 h-6 rounded-full bg-${opt.color} border border-gray-300`} onClick={() => setSelected(opt.color)} />
             </div>
           ) : (
-            <button key={opt.color} className={`w-6 h-6 rounded-full bg-${opt.color} border border-gray-300`} onClick={() => setSelected(opt.color)} />
+            <button className={`w-6 h-6 rounded-full bg-${opt.color} border border-gray-300`} key={opt.color} onClick={() => setSelected(opt.color)} />
           )
         })}
       </div>

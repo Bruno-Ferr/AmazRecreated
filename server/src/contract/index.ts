@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-import Token from "../../AMZToken.sol/AMZToken.json"
+import Token from "../../AMZToken/AMZToken.json"
 
 export async function connect(addr: string) {
   try {
@@ -9,7 +9,7 @@ export async function connect(addr: string) {
     const owner = await provider.getSigner("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
 
     const signer = await provider.getSigner(someoneAddr)
-    const AMZContract = new ethers.Contract(tokenAddr, Token.abi, provider)
+    const AMZContract = new ethers.Contract(tokenAddr, Token, provider)
   
     return {signer, AMZContract, owner}
   } catch (err) {

@@ -10,14 +10,14 @@ interface shopCartContextProps {
   cartList: productInCart[]
   cartNotifications: number
   setCartNotifications: (a: any) => void
-  addToCart: (id: number, product: ProductsProps[0], updateNotifies?: boolean) => void
-  removeFromCart: (id: number, updateNotifies?: boolean) => void
-  removeAllFromCart: (id: number) => void
+  addToCart: (id: string, product: ProductsProps[0], updateNotifies?: boolean) => void
+  removeFromCart: (id: string, updateNotifies?: boolean) => void
+  removeAllFromCart: (id: string) => void
   cleanCart: () => void
 }
 
 type productInCart = {
-  id: number
+  id: string
   amount: number
   product: ProductsProps[0]
 }
@@ -28,7 +28,7 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
   const [cartList, setCartList] = useState<productInCart[]>([]);
   const [cartNotifications, setCartNotifications] = useState(0)
 
-  function addToCart(id: number, product: ProductsProps[0], updateNotifies?: boolean) {
+  function addToCart(id: string, product: ProductsProps[0], updateNotifies?: boolean) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       setCartList(prev => {
@@ -47,7 +47,7 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
     }
   }
 
-  function removeFromCart(id: number, updateNotifies?: boolean) {
+  function removeFromCart(id: string, updateNotifies?: boolean) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       const productAmount = cartList[productIndex]
@@ -70,7 +70,7 @@ export function ShopCartProvider({children}: shopCartProviderProps) {
     }
   }
 
-  function removeAllFromCart(id: number) {
+  function removeAllFromCart(id: string) {
     const productIndex = cartList.findIndex(product => product.id === id);
     if(productIndex != -1) {
       const cartWithoutProduct = cartList.filter(product => product.id !== id)

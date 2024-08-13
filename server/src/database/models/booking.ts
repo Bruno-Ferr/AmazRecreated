@@ -7,7 +7,7 @@ const BookingSchema = new Schema({
     brand: String,
     price: Number,
     shippingFree: Boolean,
-    discount: Number || false,
+    discount: String || false,
     amount: Number
   }],
   userAddress: String,
