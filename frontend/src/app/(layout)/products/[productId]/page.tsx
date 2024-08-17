@@ -84,6 +84,10 @@ export default function Product({ params }: { params: { productId: string } }) {
     return 0;
   }
 
+  function isCoffeeAttributes(attributes: any): attributes is CoffeeAttributes {
+    return (attributes as CoffeeAttributes).sizes !== undefined;
+  }
+
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">
@@ -143,14 +147,14 @@ export default function Product({ params }: { params: { productId: string } }) {
             product.category == 'shoe' && (
               <>
                 <ColorSelector options={product.attributes} selected={typeSelected1} setSelected={setTypeSelected1} />
-                <TypeSelector options={product.attributes[0].sizes} selected={typeSelected2} setSelected={setTypeSelected2} />
+                <TypeSelector options={(product.attributes[0] as ShoeAttributes).sizes} selected={typeSelected2} setSelected={setTypeSelected2} />
               </>
             )
           }
           {
             product.category == 'coffee' && (
               <>
-                <TypeSelector options={product.attributes[0].sizes} selected={typeSelected1} setSelected={setTypeSelected1} />
+                <TypeSelector options={(product.attributes[0] as CoffeeAttributes).sizes} selected={typeSelected1} setSelected={setTypeSelected1} />
               </>
             )
           }
