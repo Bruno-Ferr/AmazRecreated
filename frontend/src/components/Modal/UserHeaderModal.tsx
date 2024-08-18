@@ -80,28 +80,30 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
 
   if(isOpen) {
     return (
-      <div onClick={(e) => e.stopPropagation()} className="w-72 h-64 absolute rounded-lg cursor-default bg-white border border-gray-500 top-full right-[-120px] p-4 mt-1" ref={clickoutRef}>
+      <div onClick={(e) => e.stopPropagation()} className="xl:w-72 xl:h-64 lg:w-64 lg:h-56 absolute rounded-lg cursor-default bg-white border border-gray-500 top-full 2xl:right-[-120px] md:right-[-60px] right-0 p-4 mt-1 z-10" ref={clickoutRef}>
       {
         signUpFormOpen ? (
-          <div className="flex flex-col font-medium">
-            <button onClick={() => setSignUpFormOpen(false)}>
-              <ArrowLeft size={18} className="text-gray-400" />
-            </button>
-            <label htmlFor="name" className="mt-2">Name:</label>
-            <input type="text" name="name" placeholder="E.g: John Doe" onChange={(e) => setUserName(e.target.value)} 
-              className="border border-gray-300 p-1 rounded-md"
-            />
-            <label htmlFor="" className="mt-1">Address:</label>
-            {!user.wallet ? (
-              <button 
-                className={`text-blue-500 py-2 easy-in-out duration-300 rounded-md hover:bg-blue-500 hover:text-white hover:before:content-["Click_to_connect"] before:content-["Connect_your_wallet"]`}
-                onClick={() => getAddress()}
+          <>
+            <div className="flex flex-col font-medium">
+              <button onClick={() => setSignUpFormOpen(false)}>
+                <ArrowLeft size={18} className="text-gray-400" />
+              </button>
+              <label htmlFor="name" className="mt-2">Name:</label>
+              <input type="text" name="name" placeholder="E.g: John Doe" onChange={(e) => setUserName(e.target.value)} 
+                className="border border-gray-300 p-1 rounded-md"
               />
-            ) : (
-              <p className="m-auto">{formatWalletAddress(user.wallet)}</p>
-            )}
-            <button className="text-white font-medium bg-orange-400 rounded-md py-2 w-full mt-8" onClick={() => createUser()}>Save</button>
-          </div>
+              <label htmlFor="" className="mt-1">Address:</label>
+              {!user.wallet ? (
+                <button 
+                  className={`text-blue-500 py-2 easy-in-out duration-300 rounded-md hover:bg-blue-500 hover:text-white hover:before:content-["Click_to_connect"] before:content-["Connect_your_wallet"]`}
+                  onClick={() => getAddress()}
+                />
+              ) : (
+                <p className="m-auto">{formatWalletAddress(user.wallet)}</p>
+              )}
+              <button className="text-white font-medium bg-orange-400 rounded-md py-2 w-full mt-8" onClick={() => createUser()}>Save</button>
+            </div>
+          </>
         ) : !!user?.name ? ( 
           <div className="font-medium flex flex-col justify-between h-full">
             <div>
@@ -130,7 +132,7 @@ export default function UserModal({isOpen, setOpen}: UserModalProps) {
         ) : (
           <div className="flex flex-col justify-end h-full">
   
-            <button onClick={(e) =>{ e.stopPropagation(); connectWallet()}} className="text-white font-medium bg-orange-400 rounded-md py-2 w-full">Login</button>
+            <button onClick={(e) =>{ e.stopPropagation(); connectWallet()}} className="text-white font-medium bg-orange-400 rounded-md py-2 w-28 md:w-full">Login</button>
             <div className="flex items-center justify-between my-4">
               <div className="w-1/3 h-[1px] bg-gray-300 rounded-sm" />
               <p className="text-gray-400 font-medium">Or</p>

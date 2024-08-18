@@ -43,7 +43,7 @@ export default function CongratulationPage() {
   return ( 
     <main>
       <div className="bg-[url('/Confeti.jpg')] bg-cover bg-no-repeat">
-        <div className="xl:max-w-7xl m-auto h-96 flex items-center justify-center">
+        <div className="xl:max-w-7xl lg:max-w-5xl m-auto h-96 flex items-center justify-center">
           <div className="flex flex-col">
             <div className="flex flex-col items-center gap-3">
                 <div className="rounded-2xl bg-orange-100 h-20 w-20 flex items-center justify-center" >
@@ -54,7 +54,7 @@ export default function CongratulationPage() {
           </div>
         </div>
       </div>
-      <div className="xl:max-w-7xl m-auto mt-5 flex justify-between">
+      <div className="xl:max-w-7xl lg:max-w-5xl m-auto mt-5 flex justify-between">
         <div>
           <h2 className="text-2xl font-medium text-[#221F1F]">Package Contents</h2>
           <div>

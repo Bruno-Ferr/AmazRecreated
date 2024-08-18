@@ -115,7 +115,7 @@ export default function Products() {
   }
 
   return (
-    <main className="xl:max-w-7xl m-auto mt-5">
+    <main className="xl:max-w-7xl lg:max-w-5xl mx-2 md:mx-auto mt-5">
       <div className="flex items-center mb-9">
         <h5 className="text-sm font-bold text-[#9B9A9A]">Popular Products</h5>
         <ArrowRight size={14} weight="bold" className="mx-2" />
@@ -127,27 +127,27 @@ export default function Products() {
             <h2 className="text-4xl font-medium text-[#221F1F]">General</h2>
             <h4 className="text-lg font-medium text-[#9B9A9A]">{products?.length} results</h4>
           </div>
-          <div>
+          <div className="hidden lg:block">
             <button className="text-sm w-36 h-14 font-bold bg-[#FFE1B3] rounded-3xl">Express shipping</button>
             <button className="text-sm w-36 h-14 font-medium mx-4 bg-[#F8F7F8] rounded-3xl">Coupon Products</button>
             <button className="text-sm w-36 h-14 font-medium bg-[#F8F7F8] rounded-3xl">Free Cargo</button>
           </div>
         </div>
-        <div className="mt-16 grid grid-cols-4 gap-x-8 gap-y-8"> {/* Grid */}
+        <div className="mt-16 grid grid-cols-1 gap-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-8"> {/* Grid */}
           {products?.map(item => {
             const amountAndPrice = getAmountsAndPrices(item)
             return (
               <div className="flex" key={item._id}>
-                <div className="flex flex-col text-start">
-                  <Link href={`./products/${item._id}`} className="h-48 w-60 flex items-center justify-center rounded-xl shadow-[10px_10px_25px_5px_rgba(0,0,0,0.1)]">
+                <div className="flex lg:flex-col text-start">
+                  <Link href={`./products/${item._id}`} className="h-36 w-48 md:h-48 md:w-60 flex items-center justify-center rounded-xl shadow-[10px_10px_25px_5px_rgba(0,0,0,0.1)]">
                     <Image
                       src={item.image[0]}
-                      width={180}
-                      height={180}
+                      width={130}
+                      height={130}
                       alt={item.name}
                     />
                   </Link>
-                  <div className="mt-6">
+                  <div className="lg:mt-6 ml-2">
                     <h2 className="font-bold text-[#221F1F]">{item.name}</h2>
                     <p className="text-sm font-medium text-[#ABABAB]">{item.brand}</p>
                     <button className="flex items-center  my-3" onClick={(e) => handleClickInterno(e)}>

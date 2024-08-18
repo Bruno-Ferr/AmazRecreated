@@ -85,14 +85,14 @@ export default function Product({ params }: { params: { productId: string } }) {
   }
 
   return (
-    <main className="xl:max-w-7xl m-auto mt-5">
+    <main className="xl:max-w-7xl lg:max-w-5xl m-auto mt-5">
       <div className="flex items-center mb-9">
         <h5 className="text-sm font-bold text-[#9B9A9A]">Popular Products</h5>
         <ArrowRight size={14} weight="bold" className="mx-2" />
         <h5 className="text-sm font-bold text-[#221F1F]">{product.category}</h5>
       </div>
-      <div className="flex gap-4">
-        <div>
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
+        <div className="hidden lg:block">
           <div className="flex flex-col gap-4">
             <div className="w-24 h-24 rounded-lg bg-gray-200 border-2 border-orange-500" />
             <div className="w-24 h-24 rounded-lg bg-gray-200" />
@@ -109,10 +109,10 @@ export default function Product({ params }: { params: { productId: string } }) {
           </div>
         </div>
         
-        <div className="h-[32rem] w-[32rem] rounded-lg bg-gray-200 flex items-center justify-center">
+        <div className="h-96 w-96 md:h-[32rem] md:w-[32rem] rounded-lg bg-gray-200 flex items-center justify-center">
           {/* <Image src={product.image[0]} width={32} height={32} alt={product.name} /> */}
         </div>
-        <div>
+        <div className="w-96 md:w-max">
           <h1 className="text-4xl font-semibold">{product?.name}</h1>
           <p className="flex gap-1 font-semibold">by 
             <Link href={'/'} className="underline underline-offset-4 font-bold"> {product?.brand}</Link>
@@ -155,8 +155,8 @@ export default function Product({ params }: { params: { productId: string } }) {
             )
           }
           <div className="flex gap-3">
-            <button className="flex w-20 bg-gray-200 items-center justify-center py-3 rounded-xl text-gray-500 hover:bg-red-600 hover:text-white ease-in"><Heart size={24} /></button>
-            <button className="flex w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white" onClick={() => addToCart(product._id, product, true)}><ShoppingCart size={24} /> Add to cart</button>
+            <button className="flex w-1/3 md:w-20 bg-gray-200 items-center justify-center py-3 rounded-xl text-gray-500 hover:bg-red-600 hover:text-white ease-in"><Heart size={24} /></button>
+            <button className="flex w-2/3 md:w-52 bg-orange-400 items-center justify-center py-3 rounded-xl text-white" onClick={() => addToCart(product._id, product, true)}><ShoppingCart size={24} /> Add to cart</button>
           </div>
           <div className="my-4">
             <div className="flex my-1">
@@ -180,12 +180,12 @@ export default function Product({ params }: { params: { productId: string } }) {
           </div>
         </div>
       </div>
-      <div className="mt-28">
+      <div className="mt-28 w-96 m-auto">
         <div className="flex items-center">
           <div className="h-10 w-2 bg-orange-400 rounded-full" />
           <h2 className="text-2xl ml-4 font-semibold">Product description</h2>
         </div>
-        <div className="flex gap-20 font-medium text-lg mt-6">
+        <div className="flex gap-20 font-medium text-lg mt-6 overflow-x-auto">
           <button>
             Description
           </button>
@@ -198,8 +198,8 @@ export default function Product({ params }: { params: { productId: string } }) {
             <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-gray-700 text-white font-medium text-xs ml-2">26</div>
           </button>
         </div>
-        <div className="flex mt-6 gap-4">
-          <div className="w-3/5">
+        <div className="flex flex-col md:flex-row mt-6 gap-4">
+          <div className="w-full md:w-3/5">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
             <div className="mt-10 bg-gray-100 h-24 flex items-center justify-around font-medium rounded-md">
               <div className="flex flex-col">
@@ -216,7 +216,7 @@ export default function Product({ params }: { params: { productId: string } }) {
               </div>
             </div>
           </div>
-          <div className="w-[28rem] h-64 bg-gray-300 rounded-2xl flex items-center justify-center">
+          <div className="w-96 md:w-[28rem] h-64 bg-gray-300 rounded-2xl flex items-center justify-center">
             Video
           </div>
         </div>

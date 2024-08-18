@@ -112,13 +112,13 @@ export default function Cart() {
   }
 
   return (
-    <main className="xl:max-w-7xl m-auto mt-5">
-      <Link href={"/products"} className="flex items-center mb-9">
+    <main className="xl:max-w-7xl md:max-w-5xl max-w-96 m-auto mt-5">
+      <Link href={"/products"} className="flex items-center mb-4 md:mb-9">
         <ArrowLeft size={14} weight="bold" className="mx-2" />
-        <h5 className="text-sm font-bold text-[#221F1F]">Return to Shopping</h5>
+        <h5 className="text-md md:text-sm font-bold text-[#221F1F]">Return to Shopping</h5>
       </Link>
       <div>
-        <div className="flex justify-between">
+        <div className="flex flex-col md:flex-row justify-between">
           <div>
             <div className="flex gap-3 mb-9">
               <h2 className="text-4xl font-medium text-[#221F1F]">Shopping cart</h2>
