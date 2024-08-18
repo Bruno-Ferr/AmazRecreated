@@ -30,13 +30,13 @@ export default function CongratulationPage() {
 
   useEffect(() => {
     cleanCart()
-    async function getLastPurchase() {
-      const res = await axios.get(`${process.env.API_ADDRESS}/clientLastPurchase/${user.wallet}`)
-      setLastPurchase(res.data.purchase)
-    }
+    // async function getLastPurchase() {
+    //   const res = await axios.get(`${process.env.API_ADDRESS}/clientLastPurchase/${user.wallet}`)
+    //   setLastPurchase(res.data.purchase)
+    // }
 
     if(user.wallet != undefined) {
-      getLastPurchase()
+      //getLastPurchase()
     }
   }, [user])
 

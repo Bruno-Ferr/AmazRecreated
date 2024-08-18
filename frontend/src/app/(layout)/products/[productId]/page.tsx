@@ -84,10 +84,6 @@ export default function Product({ params }: { params: { productId: string } }) {
     return 0;
   }
 
-  function isCoffeeAttributes(attributes: any): attributes is CoffeeAttributes {
-    return (attributes as CoffeeAttributes).sizes !== undefined;
-  }
-
   return (
     <main className="xl:max-w-7xl m-auto mt-5">
       <div className="flex items-center mb-9">

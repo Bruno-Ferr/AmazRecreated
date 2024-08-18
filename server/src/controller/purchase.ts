@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { ethers } from "ethers";
-import Token from "../../AMZToken.sol/AMZToken.json"
 import { findProductDB } from "../database/productsDb";
 import { earnAMZ, seeBalance } from "../contract";
 import fs from 'fs'
 import { User } from "../database/models/user";
 import { Product } from "../database/models/products";
 import { Booking } from "../database/models/booking";
+import mongoose, { Types } from "mongoose";
 
 interface purchaseResponse {
   message: string
@@ -18,11 +18,12 @@ export async function purchaseController(req: Request, res: Response) {
 
   if(!userAddr) return res.status(404).send({message: 'Connect to your wallet and try again'})
   //Usuário precisa estar cadastrado para comprar (checagem)
-  
-  try {    
+try {    
     let totalPrice = 0
     const productsFromDb = await Promise.all(purchase.map(async (item: any) => {
-      const foundProduct = await Product.findOne({ id: item.product.id });
+      const prodId = Types.ObjectId.createFromHexString(item.product._id)
+      const foundProduct = await Product.findOne({ _id: prodId });
+
       if (!foundProduct) {
         return res.status(404).json({ message: 'Product not found' });
       }
@@ -33,7 +34,7 @@ export async function purchaseController(req: Request, res: Response) {
           return res.status(404).json({ message: "Product doesn't have enough amount" });
         }
 
-        await Product.findOneAndUpdate({ id: item.product.id},{ $inc: { amount: -item.amount }}); 
+        await Product.findOneAndUpdate({ id: prodId},{ $inc: { amount: -item.amount }}); 
         totalPrice = (item.amount * foundProduct.attributes[0].price) + totalPrice
         prodPrice = foundProduct.attributes[0].price
       }
@@ -43,7 +44,7 @@ export async function purchaseController(req: Request, res: Response) {
           return res.status(404).json({ message: "Product doesn't have enough amount" });
         }
 
-        await Product.findOneAndUpdate({ id: item.product.id},{ $inc: { amount: -item.amount }}); 
+        await Product.findOneAndUpdate({ id: prodId},{ $inc: { amount: -item.amount }}); 
         totalPrice = (item.amount * foundProduct.attributes[0].sizes[0].price) + totalPrice
         prodPrice = foundProduct.attributes[0].sizes[0].price
       }
@@ -69,8 +70,12 @@ export async function purchaseController(req: Request, res: Response) {
 }
 
 export async function undoPurchase(req: Request, res: Response) {
-  const {id: bookingId} = req.params
-  console.log(bookingId)
+  const {id} = req.params
+
+  if(!id) {
+    return res.status(200).send({message: "Tx not created"});
+  }
+  const bookingId = Types.ObjectId.createFromHexString(id)
   const foundBooking = await Booking.findOne({ _id: bookingId });
   foundBooking?.products.map(async (product) => {
     await Product.findOneAndUpdate({ id: product.id},{ $inc: { amount: +product.amount! }}); 

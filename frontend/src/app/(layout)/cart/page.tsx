@@ -62,11 +62,10 @@ export default function Cart() {
       const contract: any = await connectContract();
 
       const totalInEther = (res.data.totalPrice * 0.00027).toString()
-      const amzEarned = Math.floor(res.data.totalPrice / 20) 
+      const amz = withAmz ? res.data.totalPrice : Math.floor(res.data.totalPrice / 20) 
 
       const valueToSend = withAmz ? 0 : parseEther(totalInEther)
-  
-      const tx = await contract.connect(user.signer).pay(withAmz, amzEarned, {value: valueToSend}) 
+      const tx = await contract.connect(user.signer).pay(withAmz, amz, {value: valueToSend}) 
 
       await tx.wait()
       const balance = await contract.connect(user.signer).seeBalance()
@@ -81,8 +80,10 @@ export default function Cart() {
     } catch (err) {
       console.log(err)
       //Se der erro, reverter backend de agendamento
-      const res = await axios.delete(`${process.env.API_ADDRESS}/purchase/${bookingId}`)
-      toast.error(res.data.message, {theme: 'colored'})
+      if(bookingId) {
+        const res = await axios.delete(`${process.env.API_ADDRESS}/purchase/${bookingId}`)
+        toast.error(res.data.message, {theme: 'colored'})
+      }
     }
     setLoading(false)
   }

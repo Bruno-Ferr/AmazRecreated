@@ -7,6 +7,7 @@ import { addClient, getClient, getClientBalance, getClientLastPurchase } from ".
 import mongoose, { Schema } from "mongoose";
 import { ethers } from "ethers";
 import contractABI from '../AMZToken/AMZToken.json'
+import { User } from "./database/models/user";
 
 const provider = new ethers.AlchemyProvider('sepolia', 's-vHBaDfU14XzTTkHoaYdhsGp3wKZtKT');
 // configures dotenv to work in your application
@@ -34,8 +35,9 @@ app.get("/clientLastPurchase/:id", getClientLastPurchase);
 app.get("/clientBalance/:user_addr", getClientBalance);
 
 const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS!, contractABI, provider);
-contract.on('Transfer', (prop) => {
-  console.log(`Event received: ${prop}`);
+contract.on('Transfer', async (prop) => {
+  console.log(prop)
+  //await User.findOneAndUpdate({ id: item.product.id},{ $inc: { amount: -item.amount }}); 
 });
 
 app.post("/addProduct", addProduct); 
