@@ -70,9 +70,9 @@ export default function Header() {
           </Link>
           <button className="flex items-center relative" onClick={(e) => setOpenUserModal(prev => !openUserModal)}> 
             <Image
-              src="/ToYou.jpg"
-              width={40}
-              height={40}
+              src="/user.png"
+              width={20}
+              height={20}
               alt="Profile photo"
               className="rounded-lg"
             />
